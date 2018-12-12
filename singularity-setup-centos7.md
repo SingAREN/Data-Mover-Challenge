@@ -31,7 +31,7 @@
 
     $ go get -u github.com/golang/dep/cmd/dep
     
-## Singularity v3.0.0+ Source Installation
+## Singularity v3.0.1 Source Installation
 
 **Download Singularity GitHub Repo with Go**
 
