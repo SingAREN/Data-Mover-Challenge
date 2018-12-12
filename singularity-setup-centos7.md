@@ -27,7 +27,7 @@
         echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
         source ~/.bashrc
 
-**Setup Go `dep` module foro Dependency Resolution**
+**Setup Go `dep` module for Dependency Resolution**
 
     $ go get -u github.com/golang/dep/cmd/dep
     
