@@ -73,25 +73,25 @@
       when: singularity.stat.exists == True
       register: singularity_version
 
-    - name: "Remove Singularity version if not v{{ SINGULARITY_VERSION }}"
+    - name: "Remove Singularity if not v{{ SINGULARITY_VERSION }}"
       yum:
         name: singularity
         state: absent
-      when: singularity.stat.exists == True and singularity_version.stdout.find(                                                                                                             expected_singularity_version) == -1
+      when: singularity.stat.exists == True and singularity_version.stdout.find(expected_singularity_version) == -1
 
     - name: "Download Singularity v{{ SINGULARITY_VERSION }} Release package"
       get_url:
-        url: "https://github.com/sylabs/singularity/releases/download/v{{ SINGUL                                                                                                             ARITY_VERSION }}/singularity-{{ SINGULARITY_VERSION }}.tar.gz"
+        url: "https://github.com/sylabs/singularity/releases/download/v{{ SINGULARITY_VERSION }}/singularity-{{ SINGULARITY_VERSION }}.tar.gz"
         dest: /tmp
       register: singularity_download
 
-    - name: "Install Singularity v{{ SINGULARITY_VERSION }} as a RPM Package"
+    - name: "Install Singularity v{{ SINGULARITY_VERSION }} via RPM"
       shell: |
         rpmbuild -tb {{ singularity_download.dest }}
-        rpm -ivh ~/rpmbuild/RPMS/x86_64/singularity-{{ SINGULARITY_VERSION }}-1.                                                                                                             el7.x86_64.rpm
+        rpm -ivh ~/rpmbuild/RPMS/x86_64/singularity-{{ SINGULARITY_VERSION }}-1.el7.x86_64.rpm
       args:
         executable: /bin/bash
-      when: singularity.stat.exists == False or singularity_version.stdout.find(                                                                                                             expected_singularity_version) == -1
+      when: singularity.stat.exists == False or singularity_version.stdout.find(expected_singularity_version) == -1
 
     - name: Clean up after Singularity installation
       file:
