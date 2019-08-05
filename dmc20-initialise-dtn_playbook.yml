@@ -183,3 +183,12 @@
       shell: /bin/bash -c " printf '\ny\n\n' | /bin/bash /tmp/kickstart.sh"
       when: netdata.stat.exists == False
       notify: stop netdata
+      
+    - name: Modify netdata.conf to filter relevant parameters for Prometheus
+      replace:
+        path: /etc/netdata/netdata.conf
+        regexp: '# send charts matching = \*'
+        replace: 'send charts matching = system.cpu system.ram net.* disk.*'
+        backup: yes
+
+
