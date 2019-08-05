@@ -1,0 +1,185 @@
+---
+- hosts: 127.0.0.1
+  order: sorted
+  become: yes
+  vars:
+    OFED_VERSION: 4.6-1.0.1.1
+    DMC_INTERFACES: ['ens33']
+    DMC_FILEPATH:
+
+  pre_tasks:
+    - name: Verify Ansible meets version requirements.
+      assert:
+        that: "ansible_version.full is version_compare('2.5', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.5. Current version: {{ ansible_version.full }}.
+           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
+          
+  handlers:
+    - name: stop netdata
+      systemd:
+        name: netdata
+        state: stopped
+      
+  tasks:
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+
+    # Annex A - iperf3 and singularity-3 installation
+    - name: Annex A - Install iperf3
+      yum:
+        name: iperf3
+        state: present
+
+    - name: Annex A - Install epel-release repo as it contains Singularity v3.2
+      yum:
+        name: "epel-release"
+        state: present
+
+    - name: Annex A - Install Singularity v3.2
+      yum:
+        name: "singularity-3.2.*"
+        state: present
+
+    # Annex B - Sysctl Tuning
+    - name: Annex B - Tune sysctl parameters
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: yes
+      with_items:
+        - { name: 'net.ipv4.tcp_congestion_control', value: 'htcp' }
+        - { name: 'net.ipv4.tcp_mtu_probing', value: '1' }
+        - { name: 'net.core.rmem_max', value: '2147483647' }
+        - { name: 'net.core.wmem_max', value: '2147483647' }
+        - { name: 'net.ipv4.tcp_rmem', value: '4096 87380 2147483647' }
+        - { name: 'net.ipv4.tcp_wmem', value: '4096 65536 2147483647' }
+        - { name: 'net.core.default_qdisc', value: 'fq' }
+        - { name: 'net.ipv4.conf.default.rp_filter', value: '0' }
+        - { name: 'net.ipv4.conf.all.rp_filter', value: '0' }
+        - { name: 'net.ipv4.ip_forward', value: '0' }
+
+    # Annex C 100G Interface Tuning
+    - name: Annex C - Install pre-requisite packages for interface tuning
+      yum:
+        name:
+          - pciutils
+          - libnl3-devel
+          - ethtool
+          - python34-pip
+          - python34-devel
+          - python-setuptools
+          - gcc
+          - perl
+          - "kernel-devel-{{ ansible_kernel }}"
+          - python-devel
+          - lsof
+          - redhat-rpm-config
+          - rpm-build
+          - gtk2
+          - atk
+          - cairo
+          - tcl
+          - gcc-gfortran
+          - tcsh
+          - tk
+        state: present
+        
+    - name: Annex C - Check if mlnx_tune package exists
+      stat:
+        path: /usr/sbin/mlnx_tune
+      register: mlnx_tune        
+
+    - name: Annex C - Download Mellanox OFED Package
+      get_url:
+        url: "http://www.mellanox.com/downloads/ofed/MLNX_OFED-{{ OFED_VERSION }}/MLNX_OFED_LINUX-{{ OFED_VERSION }}-rhel7.6-x86_64.tgz"
+        dest: /tmp/MLNX_OFED_LINUX-{{ OFED_VERSION }}-rhel7.6-x86_64.tgz
+        checksum: md5:acd31f33f332ee87d622cb7015fb551c
+      register: ofed_download
+      when: mlnx_tune.stat.exists == False
+
+    - name: Annex C - Unarchive Mellanox OFED Pacakage
+      unarchive:
+        src: "{{ ofed_download.dest }}"
+        dest: /tmp
+        list_files: yes
+      register: ofed_fp
+      when: mlnx_tune.stat.exists == False
+
+    - name: Annex C - Remove Mellanox OFED Package
+      file:
+        path: "{{ ofed_download.dest }}"
+        state: absent
+      when: mlnx_tune.stat.exists == False
+
+    - name: Annex C - Install Mellanox OFED
+      shell: "{{ ofed_fp.dest }}/{{ ofed_fp.files[0].split('/')[1] }}/mlnxofedinstall  --kernel-sources /usr/src/kernels/{{ ansible_kernel }} --add-kernel-support --skip-repo"
+      when: mlnx_tune.stat.exists == False
+
+    - name: Annex C - Install ethtool kernel interface
+      pip:
+        name:
+          - ethtool
+          - pyroute2
+        state: latest
+        executable: pip3.4
+
+    - name: Annex C - Retrieve TuneDTN.py script
+      get_url:
+        url: "https://gist.githubusercontent.com/youf3/aa6a93f392a724ea1183e6618ee21957/raw/045b64235c5b37ae1988ac575eb148e72ceac5c2/TuneDTN.py"
+        dest: /tmp
+        checksum: sha256:40329e50079d1672d533c20ac659411a7f83069a96cef8dd3b80d0e65858e7b9
+      register: tunedtn_script
+
+    - name: Annex C - Replace placeholder interface in TuneDTN.py with DMC interfaces
+      replace:
+        regexp: \[\'p4p1\.1310\'\]
+        path: "{{ tunedtn_script.dest }}"
+        replace: "{{ DMC_INTERFACES|string }}"
+        encoding: "utf-8"
+        backup: yes
+
+    - name: Annex C - Run TuneDTN.py
+      shell: python3.4 {{ tunedtn_script.dest|quote }}
+
+    # Annex D
+    - name: Annex D - Install fio
+      yum:
+        name: fio
+        state: present
+
+    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
+      get_url:
+        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
+        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
+        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
+        mode: 0755
+      register: fio_script
+
+    - name: Annex D - Run sca20-fio.sh
+      shell: "{{ fio_script.dest }}"
+      args:
+        executable: /bin/bash
+      register: fio_output
+
+    - debug: var=fio_output.stdout_lines
+
+    - name: Check if netdata exists
+      stat:
+        path: /usr/sbin/netdata
+      register: netdata
+
+    - name: Retrieve netdata installation script
+      get_url:
+        url: "https://my-netdata.io/kickstart.sh"
+        dest: /tmp/kickstart.sh
+        checksum: sha256:e7463b712e402652a7db9fb030eb7cbb36e2a03a1c9b2fdaabb96379ba04147c
+      when: netdata.stat.exists == False
+
+    - name: Install netdata
+      shell: /bin/bash -c " printf '\ny\n\n' | /bin/bash /tmp/kickstart.sh"
+      when: netdata.stat.exists == False
+      notify: stop netdata
