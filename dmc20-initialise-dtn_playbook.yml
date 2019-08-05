@@ -3,9 +3,10 @@
   order: sorted
   become: yes
   vars:
-    OFED_VERSION: 4.6-1.0.1.1
     DMC_INTERFACES: ['ens33']
     DMC_FILEPATH:
+    SINGULARITY_VERSION: 3.2.1
+    OFED_VERSION: 4.6-1.0.1.1    
 
   pre_tasks:
     - name: Verify Ansible meets version requirements.
@@ -13,14 +14,14 @@
         that: "ansible_version.full is version_compare('2.5', '>=')"
         msg: >
           "You must update Ansible to at least 2.5. Current version: {{ ansible_version.full }}.
-           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
-          
+           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' " 
+
   handlers:
     - name: stop netdata
       systemd:
         name: netdata
         state: stopped
-      
+
   tasks:
     - name: Update all packages
       yum:
@@ -38,10 +39,67 @@
         name: "epel-release"
         state: present
 
-    - name: Annex A - Install Singularity v3.2
+    - set_fact:
+        expected_singularity_version: "{{ SINGULARITY_VERSION }}"
+
+    - name: Install CentOS Development Tools
       yum:
-        name: "singularity-3.2.*"
-        state: present
+        name: "@Development tools"
+        state: latest
+
+    - name: Retrieve Singularity pre-requisites including Golang
+      yum:
+        name:
+          - openssl-devel
+          - libuuid-devel
+          - libseccomp-devel
+          - wget
+          - squashfs-tools
+          - golang
+        state: latest
+
+    - name: Install Go dependency for Singularity
+      shell: go get -u github.com/golang/dep/cmd/dep
+      args:
+        executable: /bin/bash
+
+    - name: Check Singularity existence
+      stat:
+        path: /usr/bin/singularity
+      register: singularity
+
+    - name: Check Singularity version if exists
+      shell: "{{ singularity.stat.path }} version"
+      when: singularity.stat.exists == True
+      register: singularity_version
+
+    - name: "Remove Singularity version if not v{{ SINGULARITY_VERSION }}"
+      yum:
+        name: singularity
+        state: absent
+      when: singularity.stat.exists == True and singularity_version.stdout.find(                                                                                                             expected_singularity_version) == -1
+
+    - name: "Download Singularity v{{ SINGULARITY_VERSION }} Release package"
+      get_url:
+        url: "https://github.com/sylabs/singularity/releases/download/v{{ SINGUL                                                                                                             ARITY_VERSION }}/singularity-{{ SINGULARITY_VERSION }}.tar.gz"
+        dest: /tmp
+      register: singularity_download
+
+    - name: "Install Singularity v{{ SINGULARITY_VERSION }} as a RPM Package"
+      shell: |
+        rpmbuild -tb {{ singularity_download.dest }}
+        rpm -ivh ~/rpmbuild/RPMS/x86_64/singularity-{{ SINGULARITY_VERSION }}-1.                                                                                                             el7.x86_64.rpm
+      args:
+        executable: /bin/bash
+      when: singularity.stat.exists == False or singularity_version.stdout.find(                                                                                                             expected_singularity_version) == -1
+
+    - name: Clean up after Singularity installation
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ singularity_download.dest }}"
+        - ~/rpmbuild
 
     # Annex B - Sysctl Tuning
     - name: Annex B - Tune sysctl parameters
