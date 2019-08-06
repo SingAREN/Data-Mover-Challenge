@@ -219,6 +219,7 @@
 
 
     # Annex D - FIO Storage Benchmarking
+
     - name: Annex D - Install fio
       yum:
         name: fio
@@ -317,3 +318,18 @@
         state: enabled
         permanent: yes
         immediate: yes
+
+    - name: Update hosts file
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          10.250.11.21 nscc01
+          10.250.11.31 nci01
+          10.250.11.41 geant01
+          10.250.11.51 starlight01
+          10.250.11.61 kisiti01
+          10.250.11.71 nict01
+          10.250.11.81 nii01
+          10.250.11.91 surfnet01
+          10.250.11.92 nordunet01
+        backup: yes
