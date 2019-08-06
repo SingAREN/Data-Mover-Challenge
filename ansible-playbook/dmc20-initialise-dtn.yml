@@ -17,10 +17,10 @@
            Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' " 
 
   handlers:
-    - name: stop netdata
+    - name: restart netdata
       systemd:
         name: netdata
-        state: stopped
+        state: restarted
 
   tasks:
     - name: Update all packages
@@ -240,7 +240,7 @@
     - name: Install netdata
       shell: /bin/bash -c " printf '\ny\n\n' | /bin/bash /tmp/kickstart.sh"
       when: netdata.stat.exists == False
-      notify: stop netdata
+      notify: restart netdata
       
     - name: Modify netdata.conf to filter relevant parameters for Prometheus
       replace:
