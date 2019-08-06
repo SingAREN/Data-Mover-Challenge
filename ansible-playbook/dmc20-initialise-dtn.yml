@@ -4,7 +4,7 @@
   become: yes
   vars:
     DMC_INTERFACES: ['enp94s0.1312']
-    DMC_FILEPATH: /tmp
+    DMC_FILEPATH: /DMC
     SINGULARITY_VERSION: 3.2.1
     OFED_VERSION: 4.6-1.0.1.1
     LSHW_OUTPUT_LOG: /tmp/dmc20-lshw.log
@@ -32,7 +32,8 @@
         name: '*'
         state: latest
 
-    # Annex A - iperf3 and singularity-3 installation
+
+    # Annex A - iperf3 and Singularity installation
     - name: Annex A - Install iperf3
       yum:
         name: iperf3
@@ -105,7 +106,7 @@
         - "{{ singularity_download.dest }}"
         - ~/rpmbuild
 
-    # Annex B - Sysctl Tuning
+    # Annex B - Kernel Parameter Tuning
     - name: Annex B - Tune sysctl parameters
       sysctl:
         name: "{{ item.name }}"
@@ -124,7 +125,8 @@
         - { name: 'net.ipv4.conf.all.rp_filter', value: '0' }
         - { name: 'net.ipv4.ip_forward', value: '0' }
 
-    # Annex C 100G Interface Tuning
+
+    # Annex C - 100G Interface Tuning
     - name: Annex C - Install pre-requisite packages for interface tuning
       yum:
         name:
@@ -186,7 +188,7 @@
         name:
           - ethtool
           - pyroute2
-        extra_args: --trusted-host pypi.python.org
+#        extra_args:  --trusted-host pypi.org --trusted-host files.pythonhosted.org
         state: latest
         executable: pip3.4
 
@@ -215,7 +217,8 @@
 
     - debug: var=tunedtn.stdout_lines
 
-    # Annex D
+
+    # Annex D - FIO Storage Benchmarking
     - name: Annex D - Install fio
       yum:
         name: fio
@@ -254,6 +257,8 @@
 
     - debug: var=fio.stdout_lines
 
+ 
+    # Annex E - lshw
     - name: Annex E - Install lshw
       yum:
         name: lshw
@@ -270,7 +275,11 @@
 
     - debug: var=lshw.stdout_lines
 
-    # Netdata
+
+    ##################################
+    # Netdata                        #
+    # Installation and Configuration #
+    ##################################
     - name: Check if netdata exists
       stat:
         path: /usr/sbin/netdata
@@ -302,3 +311,9 @@
         dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
       when: netdata.stat.exists == False
 
+    - name: Allow access to netdata TCP port 19999 from NSCC DTN on firewalld
+      firewalld:
+        rich_rule: rule family=ipv4 source address=10.250.11.21 port port=19999 protocol=tcp accept
+        state: enabled
+        permanent: yes
+        immediate: yes
