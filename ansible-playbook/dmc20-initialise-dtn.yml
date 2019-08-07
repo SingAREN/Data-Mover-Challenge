@@ -42,12 +42,12 @@
     - set_fact:
         expected_singularity_version: "{{ SINGULARITY_VERSION }}"
 
-    - name: Install CentOS Development Tools
+    - name: Annex A - Install CentOS Development Tools
       yum:
         name: "@Development tools"
         state: latest
 
-    - name: Retrieve Singularity pre-requisites including Golang
+    - name: Annex A - Retrieve Singularity pre-requisites including Golang
       yum:
         name:
           - openssl-devel
@@ -58,34 +58,34 @@
           - golang
         state: latest
 
-    - name: Install Go dependency for Singularity
+    - name: Annex A - Install Go dependency for Singularity
       shell: go get -u github.com/golang/dep/cmd/dep
       args:
         executable: /bin/bash
 
-    - name: Check Singularity existence
+    - name: Annex A - Check Singularity existence
       stat:
         path: /usr/bin/singularity
       register: singularity
 
-    - name: Check Singularity version if exists
+    - name: Annex A - Check Singularity version if exists
       shell: "{{ singularity.stat.path }} version"
       when: singularity.stat.exists == True
       register: singularity_version
 
-    - name: "Remove Singularity if not v{{ SINGULARITY_VERSION }}"
+    - name: "Annex A - Remove Singularity if not v{{ SINGULARITY_VERSION }}"
       yum:
         name: singularity
         state: absent
       when: singularity.stat.exists == True and singularity_version.stdout.find(expected_singularity_version) == -1
 
-    - name: "Download Singularity v{{ SINGULARITY_VERSION }} Release package"
+    - name: "Annex A - Download Singularity v{{ SINGULARITY_VERSION }} Release package"
       get_url:
         url: "https://github.com/sylabs/singularity/releases/download/v{{ SINGULARITY_VERSION }}/singularity-{{ SINGULARITY_VERSION }}.tar.gz"
         dest: /tmp
       register: singularity_download
 
-    - name: "Install Singularity v{{ SINGULARITY_VERSION }} via RPM"
+    - name: "Annex A - Install Singularity v{{ SINGULARITY_VERSION }} via RPM"
       shell: |
         rpmbuild -tb {{ singularity_download.dest }}
         rpm -ivh ~/rpmbuild/RPMS/x86_64/singularity-{{ SINGULARITY_VERSION }}-1.el7.x86_64.rpm
@@ -93,7 +93,7 @@
         executable: /bin/bash
       when: singularity.stat.exists == False or singularity_version.stdout.find(expected_singularity_version) == -1
 
-    - name: Clean up after Singularity installation
+    - name: Annex A - Clean up after Singularity installation
       file:
         path: "{{ item }}"
         state: absent
@@ -167,14 +167,14 @@
       register: ofed_fp
       when: mlnx_tune.stat.exists == False
 
-    - name: Annex C - Remove Mellanox OFED Package
+    - name: Annex C - Install Mellanox OFED
+      shell: "{{ ofed_fp.dest }}/{{ ofed_fp.files[0].split('/')[1] }}/mlnxofedinstall  --kernel-sources /usr/src/kernels/{{ ansible_kernel }} --add-kernel-support --skip-repo"
+      when: mlnx_tune.stat.exists == False
+
+    - name: Annex C - Clean up after Mellanox OFED installation
       file:
         path: "{{ ofed_download.dest }}"
         state: absent
-      when: mlnx_tune.stat.exists == False
-
-    - name: Annex C - Install Mellanox OFED
-      shell: "{{ ofed_fp.dest }}/{{ ofed_fp.files[0].split('/')[1] }}/mlnxofedinstall  --kernel-sources /usr/src/kernels/{{ ansible_kernel }} --add-kernel-support --skip-repo"
       when: mlnx_tune.stat.exists == False
 
     - name: Annex C - Install ethtool kernel interface
@@ -202,6 +202,14 @@
 
     - name: Annex C - Run TuneDTN.py
       shell: python3.4 {{ tunedtn_script.dest|quote }}
+      register: tunedtn
+
+    - name: Annex C - Save TuneDTN output
+      copy:
+        content: "{% for line in tunedtn.stdout_lines %}{{line}}\n{% endfor %}"
+        dest: /tmp/TuneDTN.log
+
+    - debug: var=tunedtn.stdout_lines
 
     # Annex D
     - name: Annex D - Install fio
@@ -209,22 +217,49 @@
         name: fio
         state: present
 
-    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
-      get_url:
-        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
-        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
-        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
-        mode: 0755
-      register: fio_script
+#    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
+#      get_url:
+#        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
+#        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
+#        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
+#        mode: 0755
+#      register: fio_script
+#
+#    - name: Annex D - Run sca20-fio.sh
+#      shell: "{{ fio_script.dest }}"
+#      args:
+#        executable: /bin/bash
+#      register: fio
+#
+#    - name: Annex D - Clean up after sca20-fio.sh
+#      file:
+#        path: "{{ DMC_FILEPATH|default('/tmp', true)}}/FIO"
+#        state: absent
+#
+#    - name: Annex D - Save sca20-fio.sh output
+#      copy:
+#        content: "{% for line in fio.stdout_lines %}{{line}}\n{% endfor %}"
+#        dest: /tmp/sca20-fio.log
+#
+#    - debug: var=fio.stdout_lines
 
-    - name: Annex D - Run sca20-fio.sh
-      shell: "{{ fio_script.dest }}"
-      args:
-        executable: /bin/bash
-      register: fio_output
+    - name: Annex E - Install lshw
+      yum:
+        name: lshw
+        state: present
 
-    - debug: var=fio_output.stdout_lines
+    - name: Annex E - Run lshw
+      shell: lshw
+      register: lshw
 
+    - name: Annex E - Save lshw output
+      copy:
+        content: "{% for line in lshw.stdout_lines %}{{line}}\n{% endfor %}"
+        dest: /tmp/lshw.log
+
+    - debug: var=lshw.stdout_lines
+
+    # Netdata
     - name: Check if netdata exists
       stat:
         path: /usr/sbin/netdata
@@ -238,7 +273,7 @@
       when: netdata.stat.exists == False
 
     - name: Install netdata
-      shell: /bin/bash -c " printf '\ny\n\n' | /bin/bash /tmp/kickstart.sh"
+      shell:  "/bin/sh /tmp/kickstart.sh --non-interactive --stable-channel"
       when: netdata.stat.exists == False
       notify: restart netdata
       
