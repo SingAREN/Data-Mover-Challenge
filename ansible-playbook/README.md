@@ -32,3 +32,29 @@ The script is written for CentOS 7.6 and Ansible >2.5
       executable location = /usr/bin/ansible
       python version = 2.7.5 (default, Jun 20 2019, 20:27:34) [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)]
     ```
+4. Download Ansible script from GitHub
+
+      ```
+      $ curl -o dmc20-initialise-dtn.yml https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/dmc20-initialise-dtn.yml
+      ```
+
+5. Edit the `DMC_FILEPATH` and `DMC_INTERFACES` variables within `dmc20-initialise-dtn.yml` vars entry. 
+    - `DMC_FILEPATH` is the absolute filepath where the DMC data will be stored, this is required for storage fio benchmarking.
+    - `DMC_INTERFACES` is the network interface used during the DMC in list format, this is required for tuning the specific interfaces.
+    
+    ```
+    $ vim dmc20-initialise-dtn.yml
+    ```
+    Example:
+    
+    ```
+      vars:
+        DMC_INTERFACES: ['ens33.1312']
+        DMC_FILEPATH: /data/dtn
+    ```
+    
+6. Once the `DMC_INTERFACES` and `DMC_FILEPATH` variables have been added, run the Ansible playbook with the `-b -K` flags.
+
+    ```
+    $ ansible-playbook -b -K dmc20-initialise-dtn.yml
+    ```
