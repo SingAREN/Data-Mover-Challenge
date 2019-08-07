@@ -3,14 +3,14 @@
   order: sorted
   become: yes
   vars:
-    DMC_INTERFACES: ['ens33']
-    DMC_FILEPATH:
+    DMC_INTERFACES: ['enp0s3']
+    DMC_FILEPATH: 
     SINGULARITY_VERSION: 3.2.1
     OFED_VERSION: 4.6-1.0.1.1
-    LSHW_OUTPUT_LOG: /tmp/lshw.log
-    TUNEDTN_OUTPUT_LOG: /tmp/TuneDTN.log
-    SCA20_FIO_OUTPUT_LOG: /tmp/sca20-fio.log
-    NETDATA_INSTALL_OUTPUT_LOG: /tmp/netdata.log
+    LSHW_OUTPUT_LOG: /tmp/dmc20-lshw.log
+    TUNEDTN_OUTPUT_LOG: /tmp/dmc20-TuneDTN.log
+    SCA20_FIO_OUTPUT_LOG: /tmp/dmc20-sca20-fio.log
+    NETDATA_INSTALL_OUTPUT_LOG: /tmp/dmc20-netdata.log
 
   pre_tasks:
     - name: Verify Ansible meets version requirements.
