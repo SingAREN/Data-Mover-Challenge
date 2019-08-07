@@ -217,31 +217,31 @@
         name: fio
         state: present
 
-#    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
-#      get_url:
-#        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
-#        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
-#        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
-#        mode: 0755
-#      register: fio_script
-#
-#    - name: Annex D - Run sca20-fio.sh
-#      shell: "{{ fio_script.dest }}"
-#      args:
-#        executable: /bin/bash
-#      register: fio
-#
-#    - name: Annex D - Clean up after sca20-fio.sh
-#      file:
-#        path: "{{ DMC_FILEPATH|default('/tmp', true)}}/FIO"
-#        state: absent
-#
-#    - name: Annex D - Save sca20-fio.sh output
-#      copy:
-#        content: "{% for line in fio.stdout_lines %}{{line}}\n{% endfor %}"
-#        dest: /tmp/sca20-fio.log
-#
-#    - debug: var=fio.stdout_lines
+    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
+      get_url:
+        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
+        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
+        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
+        mode: 0755
+      register: fio_script
+
+    - name: Annex D - Run sca20-fio.sh
+      shell: "{{ fio_script.dest }}"
+      args:
+        executable: /bin/bash
+      register: fio
+
+    - name: Annex D - Clean up after sca20-fio.sh
+      file:
+        path: "{{ DMC_FILEPATH|default('/tmp', true)}}/FIO"
+        state: absent
+
+    - name: Annex D - Save sca20-fio.sh output
+      copy:
+        content: "{% for line in fio.stdout_lines %}{{line}}\n{% endfor %}"
+        dest: /tmp/sca20-fio.log
+
+    - debug: var=fio.stdout_lines
 
     - name: Annex E - Install lshw
       yum:
