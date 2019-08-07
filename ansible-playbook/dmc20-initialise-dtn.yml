@@ -6,7 +6,11 @@
     DMC_INTERFACES: ['ens33']
     DMC_FILEPATH:
     SINGULARITY_VERSION: 3.2.1
-    OFED_VERSION: 4.6-1.0.1.1    
+    OFED_VERSION: 4.6-1.0.1.1
+    LSHW_OUTPUT_LOG: /tmp/lshw.log
+    TUNEDTN_OUTPUT_LOG: /tmp/TuneDTN.log
+    SCA20_FIO_OUTPUT_LOG: /tmp/sca20-fio.log
+    NETDATA_INSTALL_OUTPUT_LOG: /tmp/netdata.log
 
   pre_tasks:
     - name: Verify Ansible meets version requirements.
@@ -207,7 +211,7 @@
     - name: Annex C - Save TuneDTN output
       copy:
         content: "{% for line in tunedtn.stdout_lines %}{{line}}\n{% endfor %}"
-        dest: /tmp/TuneDTN.log
+        dest: "{{ TUNEDTN_OUTPUT_LOG }}"
 
     - debug: var=tunedtn.stdout_lines
 
@@ -239,7 +243,7 @@
     - name: Annex D - Save sca20-fio.sh output
       copy:
         content: "{% for line in fio.stdout_lines %}{{line}}\n{% endfor %}"
-        dest: /tmp/sca20-fio.log
+        dest: "{{ SCA20_FIO_OUTPUT_LOG }}"
 
     - debug: var=fio.stdout_lines
 
@@ -255,7 +259,7 @@
     - name: Annex E - Save lshw output
       copy:
         content: "{% for line in lshw.stdout_lines %}{{line}}\n{% endfor %}"
-        dest: /tmp/lshw.log
+        dest: "{{ LSHW_OUTPUT_LOG }}"
 
     - debug: var=lshw.stdout_lines
 
@@ -275,6 +279,7 @@
     - name: Install netdata
       shell:  "/bin/sh /tmp/kickstart.sh --non-interactive --stable-channel"
       when: netdata.stat.exists == False
+      register: netdata_install
       notify: restart netdata
       
     - name: Modify netdata.conf to filter relevant parameters for Prometheus
@@ -284,4 +289,8 @@
         replace: 'send charts matching = system.cpu system.ram net.* disk.*'
         backup: yes
 
-
+    - name: Save netdata install output
+      copy:
+        content: "{% for line in netdata_install.stdout_lines %}{{line}}\n{% endfor %}"
+        dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
+      when: netdata.stat.exists == False
