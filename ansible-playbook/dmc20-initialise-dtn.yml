@@ -4,7 +4,7 @@
   become: yes
   vars:
     DMC_INTERFACES: ['enp94s0.1312']
-    DMC_FILEPATH: /home/simon
+    DMC_FILEPATH: /tmp
     SINGULARITY_VERSION: 3.2.1
     OFED_VERSION: 4.6-1.0.1.1
     LSHW_OUTPUT_LOG: /tmp/dmc20-lshw.log
