@@ -3,8 +3,8 @@
   order: sorted
   become: yes
   vars:
-    DMC_INTERFACES: ['enp0s3']
-    DMC_FILEPATH: 
+    DMC_INTERFACES: ['enp94s0.1312']
+    DMC_FILEPATH: /home/simon
     SINGULARITY_VERSION: 3.2.1
     OFED_VERSION: 4.6-1.0.1.1
     LSHW_OUTPUT_LOG: /tmp/dmc20-lshw.log
@@ -18,7 +18,7 @@
         that: "ansible_version.full is version_compare('2.5', '>=')"
         msg: >
           "You must update Ansible to at least 2.5. Current version: {{ ansible_version.full }}.
-           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' " 
+           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
 
   handlers:
     - name: restart netdata
@@ -149,11 +149,11 @@
           - tcsh
           - tk
         state: present
-        
+
     - name: Annex C - Check if mlnx_tune package exists
       stat:
         path: /usr/sbin/mlnx_tune
-      register: mlnx_tune        
+      register: mlnx_tune
 
     - name: Annex C - Download Mellanox OFED Package
       get_url:
@@ -171,7 +171,7 @@
       register: ofed_fp
       when: mlnx_tune.stat.exists == False
 
-    - name: Annex C - Install Mellanox OFED
+    - name: Annex C - Compile and Install Mellanox OFED
       shell: "{{ ofed_fp.dest }}/{{ ofed_fp.files[0].split('/')[1] }}/mlnxofedinstall  --kernel-sources /usr/src/kernels/{{ ansible_kernel }} --add-kernel-support --skip-repo"
       when: mlnx_tune.stat.exists == False
 
@@ -186,23 +186,23 @@
         name:
           - ethtool
           - pyroute2
+        extra_args: --trusted-host pypi.python.org
         state: latest
         executable: pip3.4
 
-    - name: Annex C - Retrieve TuneDTN.py script
+    - name: Annex C - Retrieve TuneDTN.py.j2 script template
       get_url:
-        url: "https://gist.githubusercontent.com/youf3/aa6a93f392a724ea1183e6618ee21957/raw/045b64235c5b37ae1988ac575eb148e72ceac5c2/TuneDTN.py"
+        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/templates/TuneDTN.py.j2"
         dest: /tmp
-        checksum: sha256:40329e50079d1672d533c20ac659411a7f83069a96cef8dd3b80d0e65858e7b9
-      register: tunedtn_script
+        checksum: sha256:d6dfe94d15b26b9adbc761e154862400135c9343e9fbaf45f4a29b0dbbc4301d
+      register: tunedtn_template
 
-    - name: Annex C - Replace placeholder interface in TuneDTN.py with DMC interfaces
-      replace:
-        regexp: \[\'p4p1\.1310\'\]
-        path: "{{ tunedtn_script.dest }}"
-        replace: "{{ DMC_INTERFACES|string }}"
-        encoding: "utf-8"
-        backup: yes
+    - name: Annex C - Create TuneDTN.py from template
+      template:
+        src: "{{ tunedtn_template.dest }}"
+        dest: /tmp/dmc20-script-TuneDTN.py
+        mode: 0644
+      register: tunedtn_script
 
     - name: Annex C - Run TuneDTN.py
       shell: python3.4 {{ tunedtn_script.dest|quote }}
@@ -221,11 +221,18 @@
         name: fio
         state: present
 
-    - name: Annex D - Retrieve disk benchmarking script (sca20-fio.sh)
+    - name: Annex D - Retrieve disk benchmarking template - sca20-fio.sh.j2
       get_url:
-        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/sca20-fio.sh"
-        dest: "{{ DMC_FILEPATH|default('/tmp', true)}}"
-        checksum: sha256:4497639a7ab5b9f9999c3149db35ed95bb667a447591e618424ae7e7697d7b79
+        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/templates/sca20-fio.sh.j2"
+        dest: /tmp
+        checksum: sha256:16795ab67b89a6284fad7568efb57ab2ffd8fb303a585c8aab64d1e2f665d3a7
+        mode: 0644
+      register: fio_template
+
+    - name: Annex D - Create sca20-fio.sh from template
+      template:
+        src: "{{ fio_template.dest }}"
+        dest: /tmp/dmc20-script-sca20-fio.sh
         mode: 0755
       register: fio_script
 
@@ -237,7 +244,7 @@
 
     - name: Annex D - Clean up after sca20-fio.sh
       file:
-        path: "{{ DMC_FILEPATH|default('/tmp', true)}}/FIO"
+        path: "{{ DMC_FILEPATH }}/FIO"
         state: absent
 
     - name: Annex D - Save sca20-fio.sh output
@@ -281,7 +288,7 @@
       when: netdata.stat.exists == False
       register: netdata_install
       notify: restart netdata
-      
+
     - name: Modify netdata.conf to filter relevant parameters for Prometheus
       replace:
         path: /etc/netdata/netdata.conf
@@ -294,3 +301,4 @@
         content: "{% for line in netdata_install.stdout_lines %}{{line}}\n{% endfor %}"
         dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
       when: netdata.stat.exists == False
+
