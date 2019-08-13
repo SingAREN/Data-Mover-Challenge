@@ -5,7 +5,13 @@ Ansible script that performs the following:
 - Tunes network interfaces
 - Tunes kernel parameters
 
-The script is written for CentOS 7.6 and Ansible >2.5
+The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
+
+## Pre-requisites
+
+1. Setup storage for DMC which has to be found at `/DMC`
+2. Create `/DMC/data` directory with `0755` permissions
+3. Create `/DMC/data` directory with `0777` permissions
 
 ## Running the script
 
@@ -38,8 +44,7 @@ The script is written for CentOS 7.6 and Ansible >2.5
       $ curl -o dmc20-initialise-dtn.yml https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/dmc20-initialise-dtn.yml
       ```
 
-5. Edit the `DMC_FILEPATH` and `DMC_INTERFACES` variables within `dmc20-initialise-dtn.yml` vars entry. 
-    - `DMC_FILEPATH` is the absolute filepath where the DMC data will be stored, this is required for storage fio benchmarking.
+5. Edit the `DMC_INTERFACES` variables within `dmc20-initialise-dtn.yml` `vars` entry. 
     - `DMC_INTERFACES` is the network interface used during the DMC in list format, this is required for tuning the specific interfaces.
     
     ```
@@ -50,11 +55,15 @@ The script is written for CentOS 7.6 and Ansible >2.5
     ```
       vars:
         DMC_INTERFACES: ['ens33.1312']
-        DMC_FILEPATH: /data/dtn
     ```
     
-6. Once the `DMC_INTERFACES` and `DMC_FILEPATH` variables have been added, run the Ansible playbook with the `-b -K` flags.
+6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags.
 
     ```
     $ ansible-playbook -b -K dmc20-initialise-dtn.yml
-    ```
+    ``` 
+
+### Notes:
+- The ansible-playbook will take, at minimum, 30 minutes to completer during the first run. The two main culprits are `Annex C - Compile and Install Mellanox OFED` and `Annex D - Run sca20-fio.sh` tasks. The first task needs to compile many files from source and the second task will benchmark the `/DMC` storage. 
+- It is safe to re-run the playbook 
+- Installation log files will be found in `/tmp` as `dmc20-*.log` files by default.
