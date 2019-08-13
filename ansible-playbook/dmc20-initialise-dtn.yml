@@ -32,6 +32,43 @@
         name: '*'
         state: latest
 
+    - name: Update hosts file
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          10.250.11.21 nscc01
+          10.250.11.31 nci01
+          10.250.11.41 geant01
+          10.250.11.51 starlight01
+          10.250.11.61 kisiti01
+          10.250.11.71 nict01
+          10.250.11.81 nii01
+          10.250.11.91 surfnet01
+          10.250.11.92 nordunet01
+        backup: yes
+
+    - name: Add DMC users
+      user:
+        name: "{{ item.username }}"
+        password: "{{ item.password }}"
+        state: present
+        shell: /bin/bash
+      with_items:
+        - { username: "DMCUser01", password: "$6$DAvhic2Szhc1$BW3HJJyWetAzdd0SzqAfej.epSkHXa38NCuu4G1BuZgnMNuql02jy/W7/Mmwaan5/vUxroRoDzYtzD1SIhbdA." }
+        - { username: "DMCUser02", password: "$6$DAvhic2Szhc1$qcOKV1rlF.lchIe5FSTZeuUTYdcMGnzcBSgg6eZx/xZr6x6TKPUeEljSGj4hkbCVvLFLmIH6UCVYD5yK6ryC7/" }
+        - { username: "DMCUser03", password: "$6$DAvhic2Szhc1$uip.e8RRppG2LwH2A.sY0o.mT32yamPYvP6ukedOBXETW2BYm3CkEMFR/fDLtMfdEeraJ25pP4TxqZHeAIc6C1" }
+        - { username: "DMCUser04", password: "$6$DAvhic2Szhc1$owdTSimbuLvdohxe2.CLXZJqO4bEab7pMyhDWj/1VqsFr7Pbi7z8TVmtjtxECrekJ8JkwU9lMyb2M63fA.OgC0" }
+        - { username: "DMCUser05", password: "$6$DAvhic2Szhc1$GONYL/WHxM6Mt6V2YNPeVtfVdE1mKnNKRKkuGhYWIDZoczXQwR53/ihhmFQxoncyhScfPzg4PsbDKgVDfug2X0" }
+        - { username: "DMCUser06", password: "$6$DAvhic2Szhc1$fpmO035iA5nn4GCvsp2cLJP0WtU.h0WqLQBGh9ObGO4FuNlfwrZuBahB6divE.Pec93N/QU0L5FlWVwqg.KL50" }
+        - { username: "DMCUser07", password: "$6$DAvhic2Szhc1$jKI4sEi10ijnnn3qM/lnp/pIJpJZHplP68rEnJ1gTnn8sAdgmtmXTp7.Y0/eFlc2vUcoIz1bh0kTK6DVsTTSs0" }
+        - { username: "DMCUser08", password: "$6$DAvhic2Szhc1$/dJkFk4gcdhSbYTmbjMf2WPFkekVw3P5RrzKPlHuSMEXqrSg6tkx7K6idbF2cIONM8iib/LCTRfjtV3OKavXg." }
+        - { username: "DMCUser09", password: "$6$DAvhic2Szhc1$I6ZdqfYriKCXoIK8NtBWNshfm5Ap5PNVOiDEM.zviCI8TNy9baJuAt7BpaeZOt9sxbJfQnLkq5vq7KEvEcdIK0" }
+        - { username: "DMCUser10", password: "$6$DAvhic2Szhc1$cGwvquW9PiYuJQM9iHavpYg1/D9XlOUguJt51LLExyTlBrvq3EsEHaNKsDoy0LBLKOQmpKT6BlspmVnGLI7NC0" }
+        - { username: "DMCUser11", password: "$6$DAvhic2Szhc1$qNSnN0AXroUiMFss8LHLrsJL9NbDeCjWO760W6si6wl3XsyNCirnhqhxF654ErUtd6zrtVHc8UAu2GCxTNrSR." }
+        - { username: "DMCUser12", password: "$6$DAvhic2Szhc1$ntpL7EZpTelumwQer8C6sgquxOrWB5eteh4vboEEPieQGJhUHFI4/duod3ZZDKL/XbtjR0VZ6VFthRN33gJ6v0" }
+        - { username: "DMCUser13", password: "$6$DAvhic2Szhc1$J8llllsbe38CzzJ38Ogzh/G6xhAAoLIYlicJMCKhyjlFXONRYRCFPZ8BOWXyg5ftuLHBSOHC6ADmsu2q/BWRq0" }
+        - { username: "DMCUser14", password: "$6$DAvhic2Szhc1$0Naaf8uMhLVVQQ9MgFziA95ForLaKPK1U5q2CdjNZgjmDNRy6lwHYEfXIb5hT6wQg0.XxkL1f5hlO1riel9Pf/" }
+        - { username: "DMCUser15", password: "$6$DAvhic2Szhc1$2DC39fmM.KRwR2nd6pfUI2Sykz5vIblY8BOf854NUqYfnnGDusXETthx4qr.KZSL1fZbxJZ/XUPkvk6HoB/ag0" }
 
     # Annex A - iperf3 and Singularity installation
     - name: Annex A - Install iperf3
@@ -297,7 +334,6 @@
       shell:  "/bin/sh /tmp/kickstart.sh --non-interactive --stable-channel"
       when: netdata.stat.exists == False
       register: netdata_install
-      notify: restart netdata
 
     - name: Modify netdata.conf to filter relevant parameters for Prometheus
       replace:
@@ -305,6 +341,7 @@
         regexp: '# send charts matching = \*'
         replace: 'send charts matching = system.cpu system.ram net.* disk.*'
         backup: yes
+      notify: restart netdata
 
     - name: Save netdata install output
       copy:
@@ -319,17 +356,3 @@
         permanent: yes
         immediate: yes
 
-    - name: Update hosts file
-      blockinfile:
-        path: /etc/hosts
-        block: |
-          10.250.11.21 nscc01
-          10.250.11.31 nci01
-          10.250.11.41 geant01
-          10.250.11.51 starlight01
-          10.250.11.61 kisiti01
-          10.250.11.71 nict01
-          10.250.11.81 nii01
-          10.250.11.91 surfnet01
-          10.250.11.92 nordunet01
-        backup: yes
