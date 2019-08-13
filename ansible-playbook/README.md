@@ -11,7 +11,7 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
 
 1. Setup storage for DMC which has to be found at `/DMC`
 2. Create `/DMC/data` directory with `0755` permissions
-3. Create `/DMC/data` directory with `0777` permissions
+3. Create `/DMC/test` directory with `0777` permissions
 
 ## Running the script
 
