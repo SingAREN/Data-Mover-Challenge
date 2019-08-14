@@ -4,7 +4,7 @@
 
 - Installation of iperf3, singularity v3.2.1 and netdata
 - Setup DMCUser01 to DMCUser15
--
+- Configures `/etc/hosts` file
 - Configures netdata to filter out cpu, memory, disk and interface statistics when sending data to Prometheus
 - Tunes network interfaces
 - Tunes kernel parameters
@@ -15,8 +15,8 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
 
 1. Requires CentOS 7.6
 1. Setup storage for DMC which has to be found at `/DMC`
-  1. Create `/DMC/data` directory with `0755` permissions
-  1. Create `/DMC/test` directory with `0777` permissions
+    1. Create `/DMC/data` directory with `0755` permissions
+    1. Create `/DMC/test` directory with `0777` permissions
 
 
 ## Running the script
