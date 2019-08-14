@@ -1,6 +1,10 @@
-Ansible script that performs the following:
+# 
+
+**The Ansible playbook performs the following:**
 
 - Installation of iperf3, singularity v3.2.1 and netdata
+- Setup DMCUser01 to DMCUser15
+-
 - Configures netdata to filter out cpu, memory, disk and interface statistics when sending data to Prometheus
 - Tunes network interfaces
 - Tunes kernel parameters
@@ -9,9 +13,11 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
 
 ## Pre-requisites
 
+1. Requires CentOS 7.6
 1. Setup storage for DMC which has to be found at `/DMC`
-2. Create `/DMC/data` directory with `0755` permissions
-3. Create `/DMC/test` directory with `0777` permissions
+  1. Create `/DMC/data` directory with `0755` permissions
+  1. Create `/DMC/test` directory with `0777` permissions
+
 
 ## Running the script
 
@@ -27,7 +33,7 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
     # yum install ansible
     ```
   
-3. Check Ansible versionl
+3. Check Ansible version if it is greater than >=2.5
 
     ```
     $ ansible --version
@@ -57,7 +63,7 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
         DMC_INTERFACES: ['ens33.1312']
     ```
     
-6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags.
+6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags. The flags indicate Ansible to run as administrator user.
 
     ```
     $ ansible-playbook -b -K dmc20-initialise-dtn.yml
