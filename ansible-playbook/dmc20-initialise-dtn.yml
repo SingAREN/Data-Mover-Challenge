@@ -37,7 +37,7 @@
         path: /etc/hosts
         block: |
           10.250.11.21 nscc01
-          10.250.11.31 nci01
+          10.250.11.31 aarnet01
           10.250.11.41 geant01
           10.250.11.51 starlight01
           10.250.11.61 kisiti01
