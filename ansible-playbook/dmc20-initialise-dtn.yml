@@ -325,9 +325,9 @@
 
     - name: Retrieve netdata installation script
       get_url:
-        url: "https://my-netdata.io/kickstart.sh"
+        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/additional_scripts/netdata-kickstart.sh"
         dest: /tmp/kickstart.sh
-        checksum: sha256:e7463b712e402652a7db9fb030eb7cbb36e2a03a1c9b2fdaabb96379ba04147c
+        checksum: sha256:4d202ddae3831d54743b333780b425de879adb1087882a048503169d39afc876
       when: netdata.stat.exists == False
 
     - name: Install netdata
