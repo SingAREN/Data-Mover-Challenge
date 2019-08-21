@@ -357,7 +357,7 @@
         dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
       when: netdata.stat.exists == false
 
-    - name: "Add DMC interface {{ DMC_INTERFACES }} to the trusted zone in firewalld"
+    - name: Add DMC interface to the trusted zone in firewalld
       firewalld:
         zone: trusted
         interface: "{{ item }}"
