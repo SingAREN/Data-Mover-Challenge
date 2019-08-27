@@ -22,10 +22,6 @@
            Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
 
   handlers:
-    - name: restart netdata
-      systemd:
-        name: netdata
-        state: restarted
 
   tasks:
     - name: Update all packages
@@ -349,13 +345,18 @@
         regexp: '# send charts matching = \*'
         replace: 'send charts matching = system.cpu system.ram net.* disk.*'
         backup: yes
-      notify: restart netdata
 
     - name: Save netdata install output
       copy:
         content: "{% for line in netdata_install.stdout_lines %}{{line}}\n{% endfor %}"
         dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
       when: netdata.stat.exists == false
+
+    - name: Restart and enable netdata process
+      systemd:
+        name: netdata
+        state: restarted
+        enabled: yes
 
     - name: Add DMC interface to the trusted zone in firewalld
       firewalld:
