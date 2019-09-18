@@ -3,7 +3,7 @@
   order: sorted
   become: yes
   vars:
-    DMC_INTERFACES: ['enp94s0.1312']
+    DMC_INTERFACES: ['enp94s0.1312'] # Change to your specific DTN Interface
     DMC_FILEPATH: /DMC
     SINGULARITY_VERSION: 3.2.1
     OFED_VERSION: 4.6-1.0.1.1
@@ -24,10 +24,10 @@
   handlers:
 
   tasks:
-    - name: Update all packages
-      yum:
-        name: '*'
-        state: latest
+#    - name: Update all packages
+#      yum:
+#        name: '*'
+#        state: latest
 
     - name: Update hosts file
       blockinfile:
@@ -158,6 +158,8 @@
         - { name: 'net.ipv4.conf.default.rp_filter', value: '0' }
         - { name: 'net.ipv4.conf.all.rp_filter', value: '0' }
         - { name: 'net.ipv4.ip_forward', value: '0' }
+        - { name: 'net.core.netdev_max_backlog', value: '250000' }
+        - { name: 'net.ipv4.tcp_no_metrics_save', value: '1' }
 
 
     # Annex C - 100G Interface Tuning
