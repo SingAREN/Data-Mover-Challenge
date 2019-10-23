@@ -10,7 +10,6 @@
     LSHW_OUTPUT_LOG: /tmp/dmc20-lshw.log
     TUNEDTN_OUTPUT_LOG: /tmp/dmc20-TuneDTN.log
     SCA20_FIO_OUTPUT_LOG: /tmp/dmc20-sca20-fio.log
-    NETDATA_INSTALL_OUTPUT_LOG: /tmp/dmc20-netdata.log
     FIO_BENCHMARK: true
 
   pre_tasks:
@@ -298,10 +297,8 @@
         dest: "{{ SCA20_FIO_OUTPUT_LOG }}"
       when: FIO_BENCHMARK
 
-
     - debug: var=fio.stdout_lines
 
- 
     # Annex E - lshw
     - name: Annex E - Install lshw
       yum:
@@ -318,47 +315,6 @@
         dest: "{{ LSHW_OUTPUT_LOG }}"
 
     - debug: var=lshw.stdout_lines
-
-
-    ##################################
-    # Netdata                        #
-    # Installation and Configuration #
-    ##################################
-    - name: Check if netdata exists
-      stat:
-        path: /usr/sbin/netdata
-      register: netdata
-
-    - name: Retrieve netdata installation script
-      get_url:
-        url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/additional_scripts/netdata-kickstart.sh"
-        dest: /tmp/kickstart.sh
-        checksum: sha256:4d202ddae3831d54743b333780b425de879adb1087882a048503169d39afc876
-      when: netdata.stat.exists == false
-
-    - name: Install netdata
-      shell:  "/bin/sh /tmp/kickstart.sh --non-interactive --stable-channel"
-      when: netdata.stat.exists == false
-      register: netdata_install
-
-    - name: Modify netdata.conf to filter relevant parameters for Prometheus
-      replace:
-        path: /etc/netdata/netdata.conf
-        regexp: '# send charts matching = \*'
-        replace: 'send charts matching = system.cpu system.ram net.* disk.*'
-        backup: yes
-
-    - name: Save netdata install output
-      copy:
-        content: "{% for line in netdata_install.stdout_lines %}{{line}}\n{% endfor %}"
-        dest: "{{ NETDATA_INSTALL_OUTPUT_LOG }}"
-      when: netdata.stat.exists == false
-
-    - name: Restart and enable netdata process
-      systemd:
-        name: netdata
-        state: restarted
-        enabled: yes
 
     - name: Add DMC interface to the trusted zone in firewalld
       firewalld:
