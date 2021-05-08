@@ -71,7 +71,7 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
     - `DMC_INTERFACES` is the network interface used during the DMC in list format, this is required for tuning the specific interfaces.
     
     ```
-    $ vim dmc21-initialise.yml
+    $ vi dmc21-initialise.yml
     ```
     Example:
     
