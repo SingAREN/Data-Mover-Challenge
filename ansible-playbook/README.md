@@ -9,17 +9,18 @@
 - Tunes network interfaces
 - Tunes kernel parameters
 
-The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
+The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
 
 ## Pre-requisites
 
-1. Requires CentOS 7.6
+1. Requires CentOS 7.9 or Ubuntu 18.04 LTS
 1. Setup storage for DMC which has to be found at `/DMC`
     1. Create `/DMC/data` directory with `0755` permissions
     1. Create `/DMC/test` directory with `0777` permissions
 
 
-## Running the script
+## Initial Setup
+### CentOS 7.9
 
 1. Enable EPEL Repository
 
@@ -37,39 +38,55 @@ The script is written for CentOS 7.6 and Ansible >2.5. The user running the ansi
 
     ```
     $ ansible --version
-    ansible 2.8.2
-      config file = /etc/ansible/ansible.cfg
-      configured module search path = [u'/home/simon/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
-      ansible python module location = /usr/lib/python2.7/site-packages/ansible
-      executable location = /usr/bin/ansible
-      python version = 2.7.5 (default, Jun 20 2019, 20:27:34) [GCC 4.8.5 20150623 (Red Hat 4.8.5-36)]
     ```
-4. Download Ansible script from GitHub
+
+### Ubuntu 18.04 LTS
+
+1. Update Apt Repository Cache
+
+    ```
+    # apt update
+    ```
+
+2. Install Ansible via apt
+
+    ```
+    # apt install ansible
+    ```
+  
+3. Check Ansible version if it is greater than >=2.5
+
+    ```
+    $ ansible --version
+    ```
+
+## Running the Ansible Playbook for Initialise DTN
+4. Git Clone Data-Mover Challenge Repository
 
       ```
-      $ curl -o dmc20-initialise-dtn.yml https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/dmc20-initialise-dtn.yml
+      $ git clone https://github.com/SingAREN/Data-Mover-Challenge.git && cd Data-Mover-Challenge/ansible-playbook
       ```
 
-5. Edit the `DMC_INTERFACES` variables within `dmc20-initialise-dtn.yml` `vars` entry. 
+5. Edit the `DMC_INTERFACES` variables within `dmc21-initialise.yml` `vars` entry. 
     - `DMC_INTERFACES` is the network interface used during the DMC in list format, this is required for tuning the specific interfaces.
     
     ```
-    $ vim dmc20-initialise-dtn.yml
+    $ vim dmc21-initialise.yml
     ```
     Example:
     
     ```
       vars:
-        DMC_INTERFACES: ['ens33.1312']
+        DMC_INTERFACES: ['ens33']
     ```
     
-6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags. The flags indicate Ansible to run as administrator user.
+6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags. The flags indicate Ansible to become the administrator user.
 
     ```
-    $ ansible-playbook -b -K dmc20-initialise-dtn.yml
+    $ ansible-playbook -b -K dmc21-initialise.yml
     ``` 
 
 ### Notes:
-- The ansible-playbook will take, at minimum, 30 minutes to completer during the first run. The two main culprits are `Annex C - Compile and Install Mellanox OFED` and `Annex D - Run sca20-fio.sh` tasks. The first task needs to compile many files from source and the second task will benchmark the `/DMC` storage. 
+- The ansible-playbook will take, at minimum, 30 minutes to complete during the first run. The two main culprits are `Annex C - Compile and Install Mellanox OFED` and `Annex D - Run sca20-fio.sh` tasks. The first task needs to compile many files from source and the second task will benchmark the `/DMC` storage. 
 - It is safe to re-run the playbook 
-- Installation log files will be found in `/tmp` as `dmc20-*.log` files by default.
+- Benchmarking log files will be found in `/tmp/benchmarks/` as `*.log` files by default.
