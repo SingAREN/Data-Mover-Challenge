@@ -1,0 +1,44 @@
+---
+- hosts: 127.0.0.1
+  order: sorted
+  become: yes
+  vars:
+    users:
+      - DMCUser01
+      - DMCUser02
+      - DMCUser03
+      - DMCUser04
+      - DMCUser05
+      - DMCUser06
+      - DMCUser07
+      - DMCUser08
+      - DMCUser09
+      - DMCUser10
+
+  pre_tasks:
+    - name: Verify Ansible meets version requirements.
+      assert:
+        that: "ansible_version.full is version_compare('2.5', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.5. Current version: {{ ansible_version.full }}.
+           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
+
+  handlers:
+
+  tasks:
+    - name: Stop DMCUser01-10 processes
+      action: shell pkill -u {{ item }} -U {{ item }}
+      with_items:
+        - "{{ users }}"
+      ignore_errors: yes
+
+    - name: Clean out /DMC/test directory
+      file:
+        state: "{{ item }}"
+        path: "/DMC/test"
+        owner: root
+        group: root
+        mode: 0777
+      with_items:
+        - absent
+        - directory

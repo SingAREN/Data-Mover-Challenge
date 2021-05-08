@@ -1,0 +1,146 @@
+---
+- hosts: localhost
+  #order: sorted
+  become: yes
+  vars:
+    DMC_INTERFACES: [''] # Change to your specific DTN Interface
+    DMC_FILEPATH: /DMC
+    LOG_DIRECTORY: /tmp/benchmarks
+    LSHW_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-lshw.log"
+    TUNEDTN_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-TuneDTN.log"
+    SCA20_FIO_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-sca20-fio.log"
+    SINGULARITY_VERSION: 3.7.3
+    OFED_VERSION: 5.3-1.0.0.1
+    GOLANG:
+      VERSION: 1.16.4
+      DIR: /usr/local
+      SHA256_CHECKSUM: 7154e88f5a8047aad4b80ebace58a059e36e7e2e4eb3b383127a28c711b4ff59 
+    NODE_EXPORTER: 
+      VERSION: 1.1.2
+      SHA256_CHECKSUM: 8c1f6a317457a658e0ae68ad710f6b4098db2cad10204649b51e3c043aa3e70d
+    FIO_BENCHMARK: true
+    ANNEX_B_SYSCTL_TUNING: false
+  
+  pre_tasks:
+    - name: Verify Ansible meets version requirements.
+      assert:
+        that: "ansible_version.full is version_compare('2.5', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.5. Current version: {{ ansible_version.full }}.
+           Please run with sudo privileges: # /bin/bash -c 'yum install -y epel-release && yum update -y  ansible' "
+
+  handlers:
+
+    - name: Enable and Start Prometheus Node_Exporter
+      systemd:
+        name: node_exporter
+        daemon-reload: yes
+        enabled: yes
+        state: restarted
+        
+    - name: Enable and Restart Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: restarted
+        
+    - name: Enable and Restart PerfSONAR Services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - perfsonar-lsregistrationdaemon
+        - pscheduler-archiver
+        - pscheduler-runner
+        - pscheduler-scheduler
+        - pscheduler-ticker
+        - psconfig-pscheduler-agent
+
+  tasks:
+
+    - name: Setup {{ LOG_DIRECTORY }} Directory for DMC Benchmarks
+      file:
+        path: "{{ LOG_DIRECTORY }}"
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
+
+    - name: Setup Pre-Requisites
+      include_tasks: "include_tasks/{{ ansible_distribution }}/1-prerequisites.yml"
+
+    - name: Update hosts file
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          103.72.192.66         nscc01
+          2001:df4:2600::6      nscc01v6
+          193.166.254.54        csc01
+          2001:708:10:6c05::2   csc01v6
+          109.171.131.3         kaust01
+          2a05:3280:439::3      kaust01v6
+          #          starlight01
+          #          starlight01v6
+          #          aarnet01
+          #          aarnet01v6
+          #          nict01
+          #          nict01v6
+          #          kisti01
+          #          kisti01v6
+          #          surfnet01
+          #          surfnet01v6
+          #          icm01
+          #          icm01v6
+        backup: yes
+
+    - name: Add DMC users
+      user:
+        name: "{{ item.username }}"
+        password: "{{ item.password }}"
+        state: present
+        shell: /bin/bash
+      with_items:
+        - { username: "DMCUser01", password: "$6$DAvhic2Szhc1$BW3HJJyWetAzdd0SzqAfej.epSkHXa38NCuu4G1BuZgnMNuql02jy/W7/Mmwaan5/vUxroRoDzYtzD1SIhbdA." }
+        - { username: "DMCUser02", password: "$6$DAvhic2Szhc1$qcOKV1rlF.lchIe5FSTZeuUTYdcMGnzcBSgg6eZx/xZr6x6TKPUeEljSGj4hkbCVvLFLmIH6UCVYD5yK6ryC7/" }
+        - { username: "DMCUser03", password: "$6$DAvhic2Szhc1$uip.e8RRppG2LwH2A.sY0o.mT32yamPYvP6ukedOBXETW2BYm3CkEMFR/fDLtMfdEeraJ25pP4TxqZHeAIc6C1" }
+        - { username: "DMCUser04", password: "$6$DAvhic2Szhc1$owdTSimbuLvdohxe2.CLXZJqO4bEab7pMyhDWj/1VqsFr7Pbi7z8TVmtjtxECrekJ8JkwU9lMyb2M63fA.OgC0" }
+        - { username: "DMCUser05", password: "$6$DAvhic2Szhc1$GONYL/WHxM6Mt6V2YNPeVtfVdE1mKnNKRKkuGhYWIDZoczXQwR53/ihhmFQxoncyhScfPzg4PsbDKgVDfug2X0" }
+        - { username: "DMCUser06", password: "$6$DAvhic2Szhc1$fpmO035iA5nn4GCvsp2cLJP0WtU.h0WqLQBGh9ObGO4FuNlfwrZuBahB6divE.Pec93N/QU0L5FlWVwqg.KL50" }
+        - { username: "DMCUser07", password: "$6$DAvhic2Szhc1$jKI4sEi10ijnnn3qM/lnp/pIJpJZHplP68rEnJ1gTnn8sAdgmtmXTp7.Y0/eFlc2vUcoIz1bh0kTK6DVsTTSs0" }
+        - { username: "DMCUser08", password: "$6$DAvhic2Szhc1$/dJkFk4gcdhSbYTmbjMf2WPFkekVw3P5RrzKPlHuSMEXqrSg6tkx7K6idbF2cIONM8iib/LCTRfjtV3OKavXg." }
+        - { username: "DMCUser09", password: "$6$DAvhic2Szhc1$I6ZdqfYriKCXoIK8NtBWNshfm5Ap5PNVOiDEM.zviCI8TNy9baJuAt7BpaeZOt9sxbJfQnLkq5vq7KEvEcdIK0" }
+        - { username: "DMCUser10", password: "$6$DAvhic2Szhc1$cGwvquW9PiYuJQM9iHavpYg1/D9XlOUguJt51LLExyTlBrvq3EsEHaNKsDoy0LBLKOQmpKT6BlspmVnGLI7NC0" }
+        - { username: "DMCUser11", password: "$6$DAvhic2Szhc1$qNSnN0AXroUiMFss8LHLrsJL9NbDeCjWO760W6si6wl3XsyNCirnhqhxF654ErUtd6zrtVHc8UAu2GCxTNrSR." }
+        - { username: "DMCUser12", password: "$6$DAvhic2Szhc1$ntpL7EZpTelumwQer8C6sgquxOrWB5eteh4vboEEPieQGJhUHFI4/duod3ZZDKL/XbtjR0VZ6VFthRN33gJ6v0" }
+        - { username: "DMCUser13", password: "$6$DAvhic2Szhc1$J8llllsbe38CzzJ38Ogzh/G6xhAAoLIYlicJMCKhyjlFXONRYRCFPZ8BOWXyg5ftuLHBSOHC6ADmsu2q/BWRq0" }
+        - { username: "DMCUser14", password: "$6$DAvhic2Szhc1$0Naaf8uMhLVVQQ9MgFziA95ForLaKPK1U5q2CdjNZgjmDNRy6lwHYEfXIb5hT6wQg0.XxkL1f5hlO1riel9Pf/" }
+        - { username: "DMCUser15", password: "$6$DAvhic2Szhc1$2DC39fmM.KRwR2nd6pfUI2Sykz5vIblY8BOf854NUqYfnnGDusXETthx4qr.KZSL1fZbxJZ/XUPkvk6HoB/ag0" }
+
+    - name: Annex A1 - Setup Singularity Container Environment Pre-Requisites
+      include_tasks: "include_tasks/{{ ansible_distribution }}/a1-singularity_prerequisites.yml"
+
+    - name: Annex A1.1 - Install Singularity Container Environment
+      include_tasks: "include_tasks/a1-1-install-singularity.yml"
+
+    - name: Annex A2 - Setup Docker Container Environment
+      include_tasks: "include_tasks/{{ ansible_distribution }}/a2-docker_installation.yml"
+
+    - name: Annex B - Perform Sysctl Kernel Parameter Tuning
+      include_tasks: "include_tasks/b-sysctl-tuning.yml"
+      when: ANNEX_B_SYSCTL_TUNING
+
+    - name: Annex C - Prepare and Run the TuneDTN Python Script
+      include_tasks: "include_tasks/{{ ansible_distribution }}/c-dtn-tuning.yml"
+
+    - name: Annex D - Perform Storage Benchmarking with fio
+      include_tasks: "include_tasks/{{ ansible_distribution }}/d-fio-storage-benchmark.yml"
+
+    - name: Annex E - Show Hardware with lshw
+      include_tasks: "include_tasks/e-lshw-retrieve-dtn-hw.yml"
+
+    - name: Annex F1 - Monitoring Tools - Install Prometheus Node Exporter
+      include_tasks: "include_tasks/f1-install-prometheus-node-exporter.yml"
+      
+    - name: Annex F2 - Monitoring Tools - Install PerfSONAR Testpoint
+      include_tasks: "include_tasks/{{ ansible_distribution }}/f2-perfsonar-testpoint.yml"

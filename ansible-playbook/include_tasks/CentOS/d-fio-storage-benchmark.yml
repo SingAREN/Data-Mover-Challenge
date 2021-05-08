@@ -1,0 +1,47 @@
+---
+  # Annex D - FIO Storage Benchmarking
+  
+  - name: Annex D - Install fio
+    yum:
+      name: fio
+      state: present
+    when: FIO_BENCHMARK 
+  
+  - name: Annex D - Retrieve disk benchmarking template - sca20-fio.sh.j2
+    get_url:
+      url: "https://raw.githubusercontent.com/SingAREN/Data-Mover-Challenge/master/ansible-playbook/templates/sca20-fio.sh.j2"
+      dest: /tmp
+      checksum: sha256:16795ab67b89a6284fad7568efb57ab2ffd8fb303a585c8aab64d1e2f665d3a7
+      mode: 0644
+    register: fio_template
+    when: FIO_BENCHMARK
+  
+  - name: Annex D - Create sca20-fio.sh from template
+    template:
+      src: "{{ fio_template.dest }}"
+      dest: /tmp/dmc20-script-sca20-fio.sh
+      mode: 0755
+    register: fio_script
+    when: FIO_BENCHMARK
+  
+  - name: Annex D - Run sca20-fio.sh
+    shell: "{{ fio_script.dest }}"
+    args:
+      executable: /bin/bash
+    register: fio
+    when: FIO_BENCHMARK
+  
+  - name: Annex D - Clean up after sca20-fio.sh
+    file:
+      path: "{{ DMC_FILEPATH }}/FIO"
+      state: absent
+    when: FIO_BENCHMARK
+  
+  - name: Annex D - Save sca20-fio.sh output
+    copy:
+      content: "{% for line in fio.stdout_lines %}{{line}}\n{% endfor %}"
+      dest: "{{ SCA20_FIO_OUTPUT_LOG }}"
+    when: FIO_BENCHMARK
+  
+  - debug: var=fio.stdout_lines
+  

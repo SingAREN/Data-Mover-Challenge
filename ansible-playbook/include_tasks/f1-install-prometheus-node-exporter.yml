@@ -1,0 +1,64 @@
+---
+  - name: Annex F1 - Create node_exporter User
+    user:
+      name:  node_exporter
+      shell: /sbin/nologin
+      system: yes
+      create_home: no
+      state: present
+   
+  - name: Annex F1 - Retrieve Node_Exporter v{{ NODE_EXPORTER.VERSION }} Package
+    get_url:
+      url: "https://github.com/prometheus/node_exporter/releases/download/v{{ NODE_EXPORTER.VERSION }}/node_exporter-{{ NODE_EXPORTER.VERSION }}.linux-amd64.tar.gz"
+      dest: /tmp
+      checksum: "sha256:{{ NODE_EXPORTER.SHA256_CHECKSUM }}"
+      mode: 0644
+    register: node_exporter_download
+
+  - name: Annex F1 - Unarchive Prometheus Node_Exporter
+    unarchive:
+      src: "{{ node_exporter_download.dest }}"
+      dest: /tmp
+      list_files: yes
+
+  - name: Annex F1 - Move Node_Exporter to /usr/local/bin/node_exporter
+    copy:
+      src: /tmp/node_exporter-{{ NODE_EXPORTER.VERSION }}.linux-amd64/node_exporter
+      dest: /usr/local/bin/node_exporter
+      remote_src: yes
+      mode: 0755
+      owner: node_exporter
+      group: node_exporter
+
+  - name: Annex F1 - Load Node_Exporter Systemd file
+    copy:
+      src: files/node_exporter/node_exporter.service
+      dest: /etc/systemd/system/node_exporter.service
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Annex F1 - /etc/sysconfig Directory if not Present 
+    file:
+      path: /etc/sysconfig
+      owner: root
+      group: root
+      mode: 0755
+      state: directory
+
+  - name: Annex F1 - Setup sysconf.node_exporter file required for Node_Exporter 
+    copy:
+      src: files/node_exporter/sysconfig.node_exporter
+      dest: /etc/sysconfig/node_exporter
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Annex F1 - Setup text-file directory for Node_Exporter 
+    file:
+      path: /var/lib/node_exporter/textfile_collector
+      owner: node_exporter
+      group: node_exporter
+      mode: 0755
+      state: directory
+    notify: Enable and Start Prometheus Node_Exporter    

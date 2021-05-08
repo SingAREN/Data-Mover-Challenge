@@ -1,0 +1,11 @@
+---
+  - name: Annex E - Run lshw
+    shell: lshw
+    register: lshw
+  
+  - name: Annex E - Save lshw output
+    copy:
+      content: "{% for line in lshw.stdout_lines %}{{line}}\n{% endfor %}"
+      dest: "{{ LSHW_OUTPUT_LOG }}"
+  
+#  - debug: var=lshw.stdout_lines
