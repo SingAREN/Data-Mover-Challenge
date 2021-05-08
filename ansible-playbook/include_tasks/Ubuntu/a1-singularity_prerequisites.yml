@@ -1,0 +1,14 @@
+--- 
+  - name: Annex A1 - Retrieve Singularity pre-requisites 
+    apt:
+      name:
+        - build-essential
+        - libssl-dev
+        - uuid-dev
+        - libgpgme11-dev
+        - libseccomp-dev
+        - pkg-config
+        - wget
+        - squashfs-tools
+        - cryptsetup          
+      state: latest

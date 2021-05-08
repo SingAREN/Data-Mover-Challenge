@@ -1,0 +1,35 @@
+---
+  - name: Annex A2 - Install required system packages for Docker CE
+    apt: 
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - virtualenv
+        - python3-setuptools
+      state: latest
+       
+  - name: Annex A2 - Add Docker GPG Key to Apt
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+  
+  - name: Annex A2 - Add Docker Apt Repository
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+  
+  - name: Annex A2 - Install Docker CE
+    apt: 
+      update_cache: yes 
+      name: docker-ce 
+      state: latest
+    notify: Enable and Restart Docker
+  
+  - name: Annex A2 - Install docker-compose
+    get_url: 
+      url : https://github.com/docker/compose/releases/download/1.29.1/docker-compose-linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 'u+x,g+x'

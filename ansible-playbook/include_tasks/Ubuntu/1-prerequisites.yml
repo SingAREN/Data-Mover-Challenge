@@ -1,0 +1,23 @@
+---   
+  - name: Update all packages
+    apt:
+      name: "*"
+      state: latest
+      update_cache: yes
+      force_apt_get: yes
+
+  - name: Install dependencies
+    apt: 
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - python3-pip
+        - python-pip
+        - virtualenv
+        - python3-setuptools
+        - iperf3
+        - lshw
+      state: latest 
+      update_cache: yes
