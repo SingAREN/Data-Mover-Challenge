@@ -1,0 +1,5 @@
+---
+  - name: Annex K - Install iperf2
+    yum: 
+      name: https://iperf.fr/download/fedora/iperf-2.0.8-2.fc23.x86_64.rpm
+      state: present

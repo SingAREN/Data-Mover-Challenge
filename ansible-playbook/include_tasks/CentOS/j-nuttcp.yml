@@ -1,0 +1,6 @@
+---
+  - name: Annex J - Install nuttcp
+    yum: 
+      name:
+        - nuttcp
+      state: latest

@@ -1,0 +1,35 @@
+---
+  - name: Annex G - Install prerequisites
+    apt:
+      name:
+        - build-essential
+        - debhelper
+        - devscripts
+        - fakeroot
+        - git
+        - libaio-dev
+        - libboost-filesystem-dev
+        - libboost-program-options-dev
+        - libboost-thread-dev
+        - libncurses-dev
+        - libnuma-dev
+        - lintian
+  
+  - name: Clone git repository
+    git:
+      clone: yes
+      repo: https://github.com/breuner/elbencho.git
+      dest: /tmp/elbencho
+      update: yes
+      
+  - name: Make .deb 
+    shell:
+        cmd: make deb && apt install ./packaging/elbencho_{{ELBENCHO_VERSION_UBUNTU}}.deb
+        chdir: /tmp/elbencho
+  
+  - name: Install the .deb
+    apt:
+      deb: /tmp/elbencho/packaging/elbencho_{{ELBENCHO_VERSION_UBUNTU}}.deb
+        
+  
+  

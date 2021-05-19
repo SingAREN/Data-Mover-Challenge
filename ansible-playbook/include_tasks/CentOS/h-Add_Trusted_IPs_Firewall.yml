@@ -1,0 +1,37 @@
+---
+   - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
+     firewalld:
+       zone: trusted
+       #interface: "{{ DMC_INTERFACES }}"
+       permanent: yes
+       immediate: yes
+       state: enabled
+       rich_rule: rule family=ipv4 source address={{ item }} accept
+     with_items: 
+       - 103.172.192.66
+       - 193.166.254.54 
+       - 109.171.131.3
+  
+  
+  # - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
+    # firewalld:
+      # zone: trusted
+      # #interface: "{{ DMC_INTERFACES }}"
+      # permanent: yes
+      # immediate: yes
+      # state: enabled
+      # source: "{{ item }}"
+    # with_items: 
+       # - 103.172.192.66
+       # - 193.166.254.54 
+       # - 109.171.131.3
+   
+   # - name: Add DMC interface to the trusted zone in firewalld
+     # firewalld:
+       # zone: trusted
+       # interface: "{{ item }}"
+       # permanent: yes
+       # immediate: yes
+       # state: enabled
+     # with_items:
+       # - "{{ DMC_INTERFACES }}"   

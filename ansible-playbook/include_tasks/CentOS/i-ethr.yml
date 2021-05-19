@@ -1,0 +1,8 @@
+---
+  - name: Annex I - Exctract ethr binary and make it executable
+    unarchive: 
+      src: https://github.com/microsoft/ethr/releases/latest/download/ethr_linux.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: '777'
+    
