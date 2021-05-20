@@ -51,6 +51,8 @@
       name:
         - ethtool
         - pyroute2
+        - importlib_metadata
+        - mitogen
       state: latest
       executable: pip3
   

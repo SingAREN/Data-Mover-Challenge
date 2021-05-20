@@ -5,8 +5,10 @@
         - pciutils
         - libnl3-devel
         - ethtool
-        - python34-pip
-        - python34-devel
+        # - python34-pip
+        # - python34-devel
+        - python36-pip
+        - python36-devel
         - python-setuptools
         - gcc
         - perl
@@ -62,8 +64,10 @@
       name:
         - ethtool
         - pyroute2
+        - importlib_metadata
+        - mitogen
       state: latest
-      executable: pip3.4
+      executable: pip3.6
 
   - name: Annex C - Create TuneDTN.py from template
     template:
@@ -73,7 +77,7 @@
     register: tunedtn_script
   
   - name: Annex C - Run TuneDTN.py
-    shell: python3.4 {{ tunedtn_script.dest|quote }}
+    shell: python3.6 {{ tunedtn_script.dest|quote }}
     register: tunedtn
   
   - name: Annex C - Save TuneDTN output
