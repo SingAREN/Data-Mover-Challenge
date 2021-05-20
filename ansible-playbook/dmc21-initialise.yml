@@ -151,19 +151,7 @@
       include_tasks: "include_tasks/{{ ansible_distribution }}/g-elbencho.yml"
     
     - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
-      include_tasks: "include_tasks/{{ ansible_distribution }}/h-Add_Trusted_IPs_Firewall.yml"
-
-    - name: Annex I - Install ethr
-      include_tasks: "include_tasks/CentOS/i-ethr.yml"
-      when: ansible_distribution == 'CentOS'
-    
-    - name: Annex J - Install nuttcp
-      include_tasks: "include_tasks/CentOS/j-nuttcp.yml"
-      when: ansible_distribution == 'CentOS'
-    
-    - name: Annex K - Install iperf2
-      include_tasks: "include_tasks/CentOS/k-iperf2.yml"
-      when: ansible_distribution == 'CentOS'  
+      include_tasks: "include_tasks/{{ ansible_distribution }}/h-Add_Trusted_IPs_Firewall.yml" 
       
       
       
