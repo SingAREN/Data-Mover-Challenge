@@ -38,7 +38,7 @@
       group: root
       mode: 0644
 
-  - name: Annex F1 - /etc/sysconfig Directory if not Present 
+  - name: Annex F1 - /etc/sysconfig Directory if not present 
     file:
       path: /etc/sysconfig
       owner: root
