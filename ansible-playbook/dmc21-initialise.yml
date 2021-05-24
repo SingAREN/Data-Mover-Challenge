@@ -4,6 +4,7 @@
   become: yes
   vars:
     DMC_INTERFACES: [''] # Change to your specific DTN Interface
+    FIO_BENCHMARK: true
     DMC_FILEPATH: /DMC
     LOG_DIRECTORY: /tmp/benchmarks
     LSHW_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-lshw.log"
@@ -18,10 +19,25 @@
     NODE_EXPORTER: 
       VERSION: 1.1.2
       SHA256_CHECKSUM: 8c1f6a317457a658e0ae68ad710f6b4098db2cad10204649b51e3c043aa3e70d
-    FIO_BENCHMARK: true
-    ANNEX_B_SYSCTL_TUNING: false
-    ELBENCHO_VERSION_CENTOS: 1.9.0-1.x86_64
-    ELBENCHO_VERSION_UBUNTU: 1.9.0_amd64
+    ELBENCHO:
+      VERSION: 1.8
+      DIR: /usr/local
+    TRUSTED_HOSTS:
+      IPV4:
+        - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
+        - { IP: "203.30.39.19", HOSTNAME: "singaren-dtn" }
+        - { IP: "103.172.192.66", HOSTNAME: "nscc01" }
+        - { IP: "193.166.254.54", HOSTNAME: "csc01" }
+        - { IP: "109.171.131.3", HOSTNAME: "kaust01" }
+        - { IP: "74.114.96.98", HOSTNAME: "starlight01" }
+        - { IP: "210.119.23.12", HOSTNAME: "ksiti01" }
+        - { IP: "145.146.1.8", HOSTNAME: "uva01" }
+        - { IP: "213.135.51.226", HOSTNAME: "icm01" }
+      IPV6:
+        - { IP: "2001:df4:2600::6", HOSTNAME: "nscc01-ipv6" }
+        - { IP: "2001:708:10:6c05:2::2", HOSTNAME: "csc01-ipv6" }
+        - { IP: "2a05:3280:439::3", HOSTNAME: "kaust01-ipv6" }
+        - { IP: "2001:610:130::", HOSTNAME: "uva01-ipv6" }
   
   pre_tasks:
     - name: Verify Ansible meets version requirements.
@@ -76,24 +92,20 @@
       blockinfile:
         path: /etc/hosts
         block: |
-          103.72.192.66         nscc01
-          2001:df4:2600::6      nscc01v6
-          193.166.254.54        csc01
-          2001:708:10:6c05::2   csc01v6
-          109.171.131.3         kaust01
-          2a05:3280:439::3      kaust01v6
-          #          starlight01
-          #          starlight01v6
-          #          aarnet01
-          #          aarnet01v6
-          #          nict01
-          #          nict01v6
-          #          kisti01
-          #          kisti01v6
-          #          surfnet01
-          #          surfnet01v6
-          #          icm01
-          #          icm01v6
+          {% if TRUSTED_HOSTS.IPV4 %}
+          
+          # DMC21 IPv4 Hosts
+          {% for host in TRUSTED_HOSTS.IPV4 %}
+          {{ host.IP }} {{ host.HOSTNAME }}
+          {% endfor %}
+          {% endif %}
+          {% if TRUSTED_HOSTS.IPV6 %}
+          
+          # DMC21 IPv6 Hosts
+          {% for host in TRUSTED_HOSTS.IPV6 %}
+          {{ host.IP }} {{ host.HOSTNAME }}
+          {% endfor %}
+          {% endif %}
         backup: yes
 
     - name: Add DMC users
@@ -128,10 +140,6 @@
     - name: Annex A2 - Setup Docker Container Environment
       include_tasks: "include_tasks/{{ ansible_distribution }}/a2-docker_installation.yml"
 
-    - name: Annex B - Perform Sysctl Kernel Parameter Tuning
-      include_tasks: "include_tasks/b-sysctl-tuning.yml"
-      when: ANNEX_B_SYSCTL_TUNING
-
     - name: Annex C - Prepare and Run the TuneDTN Python Script
       include_tasks: "include_tasks/{{ ansible_distribution }}/c-dtn-tuning.yml"
 
@@ -151,7 +159,7 @@
       include_tasks: "include_tasks/{{ ansible_distribution }}/g-elbencho.yml"
     
     - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
-      include_tasks: "include_tasks/{{ ansible_distribution }}/h-Add_Trusted_IPs_Firewall.yml" 
+      include_tasks: "include_tasks/{{ ansible_distribution }}/h-firewall.yml" 
       
       
       

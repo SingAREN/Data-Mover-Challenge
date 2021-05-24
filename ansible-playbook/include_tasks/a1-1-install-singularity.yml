@@ -1,4 +1,12 @@
 ---
+  - name: Annex A1.1 - Check Singularity existence
+    stat:
+      path: /usr/bin/singularity
+    register: singularity
+
+  - set_fact:
+      expected_singularity_version: "{{ SINGULARITY_VERSION }}" 
+
   # Annex A1 - Singularity Installation
   - name: Annex A1 - Download Go v{{ GOLANG.VERSION }}
     get_url:
@@ -6,12 +14,14 @@
       dest: /tmp
       checksum: "sha256:{{ GOLANG.SHA256_CHECKSUM }}"
       mode: 0440
+    when: singularity.stat.exists == False
 
   - name: Annex A1 - Extract Go archive into {{ GOLANG.DIR }}
     unarchive:
       src: "/tmp/go{{ GOLANG.VERSION }}.linux-amd64.tar.gz"
       dest: "{{ GOLANG.DIR }}"
       copy: no
+    when: singularity.stat.exists == False
 
   - name: Annex A1 - Create Go Binary Symbolic Link from {{ GOLANG.DIR }} to /usr/bin
     file:
@@ -21,14 +31,6 @@
       group: root
       state: link
 
-  - set_fact:
-      expected_singularity_version: "{{ SINGULARITY_VERSION }}" 
-
-  - name: Annex A1.1 - Check Singularity existence
-    stat:
-      path: /usr/bin/singularity
-    register: singularity
-  
   - name: Annex A1.1 - Check Singularity version if exists
     shell: "{{ singularity.stat.path }} version"
     when: singularity.stat.exists

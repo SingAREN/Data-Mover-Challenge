@@ -1,9 +1,10 @@
 ---
-  - name: Install centos-release-scl (yum name module unable to install it)
-    shell:
-        cmd: yum install -y centos-release-scl  
+  - name: Annex G - Install centos-release-scl for elbencho
+    yum:
+      name: centos-release-scl
+      state: present
         
-  - name: Annex G - Install prerequisites
+  - name: Annex G - Install elbencho prerequisites
     yum:
       name:
         - boost-devel
@@ -15,24 +16,25 @@
         - numactl-devel
         - rpm-build
         - devtoolset-8
+      state: present
        
-  - name: Clone git repository
+  - name: Annex G - Clone elbencho Git repository
     git:
       clone: yes
       repo: https://github.com/breuner/elbencho.git
-      dest: /tmp/elbencho
-      update: yes
+      dest: "{{ ELBENCHO.DIR }}/elbencho"
+      version: "v{{ ELBENCHO.VERSION }}-1"
       
-  - name: enter SCL and make elbencho.rpm 
+  - name: Annex G - Make elbencho RPM Package
     shell: "source /opt/rh/devtoolset-8/enable && make rpm" 
     args:  
-      chdir: /tmp/elbencho
+      chdir: "{{ ELBENCHO.DIR }}/elbencho"
       executable: /bin/bash
             
   
-  - name: Install the rpm
+  - name: Annex G - Install elbencho RPM
     yum:
-      name: /tmp/elbencho/packaging/RPMS/x86_64/elbencho-{{ELBENCHO_VERSION_CENTOS}}.rpm
+      name: "{{ ELBENCHO.DIR }}/elbencho/packaging/RPMS/x86_64/elbencho-{{ ELBENCHO.VERSION }}.0-1.x86_64.rpm"
         
   
   

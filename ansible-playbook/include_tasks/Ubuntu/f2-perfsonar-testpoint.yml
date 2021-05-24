@@ -1,10 +1,4 @@
 ---
-  - name: Annex F1 - Permit Node_Exporter traffic on Port 9100/TCP in UFW
-    ufw:
-      rule: allow
-      port: 9090
-      proto: tcp
-    
   - name: Annex F2 - Download PerfSONAR Sources List
     get_url:
       url: http://downloads.perfsonar.net/debian/perfsonar-release.list

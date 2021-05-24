@@ -1,12 +1,4 @@
 ---
-  - name: Annex F1 - Permit Node_Exporter traffic on Port 9100/TCP in Firewalld
-    firewalld:
-      port: 9100/tcp
-      permanent: yes
-      state: enabled
-      immediate: true
-      zone: public
-
   - name: Annex F2 - Enable PerfSONAR RPM Repository
     yum:
       name:  http://software.internet2.edu/rpms/el7/x86_64/latest/packages/perfSONAR-repo-0.10-1.noarch.rpm

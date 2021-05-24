@@ -2,7 +2,7 @@
 
 **The Ansible playbook performs the following:**
 
-- Installation of iperf3, singularity v3.2.1 and netdata
+- Installation of iperf3, singularity v3.7.3 and prometheus node_exporter
 - Setup DMCUser01 to DMCUser15
 - Configures `/etc/hosts` file
 - Configures netdata to filter out cpu, memory, disk and interface statistics when sending data to Prometheus
@@ -31,7 +31,7 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
 2. Install Ansible via yum
 
     ```
-    # yum install ansible
+    # yum install ansible git
     ```
   
 3. Check Ansible version if it is greater than >=2.5
@@ -51,7 +51,7 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
 2. Install Ansible via apt
 
     ```
-    # apt install ansible
+    # apt install ansible git
     ```
   
 3. Check Ansible version if it is greater than >=2.5

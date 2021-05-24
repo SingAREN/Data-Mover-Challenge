@@ -5,8 +5,6 @@
         - pciutils
         - libnl3-devel
         - ethtool
-        # - python34-pip
-        # - python34-devel
         - python36-pip
         - python36-devel
         - python-setuptools
@@ -59,17 +57,17 @@
       state: absent
     when: mlnx_tune.stat.exists == False
   
-  - name: Annex C - Install ethtool kernel interface
+  - name: Annex C - Install Pre-Requisite Python Packages for TuneDTN script from pip
     pip:
       name:
-        - ethtool
-        - pyroute2
-        - importlib_metadata
-        - mitogen
+        - ethtool==0.14
+        - pyroute2==0.6.1
+        - importlib_metadata==4.0.1
+        - mitogen==0.2.9
       state: latest
       executable: pip3.6
 
-  - name: Annex C - Create TuneDTN.py from template
+  - name: Annex C - Generate TuneDTN.py for {{ DMC_INTERFACES | join(', ') }} interfaces
     template:
       src: templates/TuneDTN.py.j2
       dest: /tmp/dmc20-script-TuneDTN.py
