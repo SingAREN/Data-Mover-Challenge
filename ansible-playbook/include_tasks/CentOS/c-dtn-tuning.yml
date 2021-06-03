@@ -64,7 +64,7 @@
         - pyroute2==0.6.1
         - importlib_metadata==4.0.1
         - mitogen==0.2.9
-      state: latest
+      state: present
       executable: pip3.6
 
   - name: Annex C - Generate TuneDTN.py for {{ DMC_INTERFACES | join(', ') }} interfaces

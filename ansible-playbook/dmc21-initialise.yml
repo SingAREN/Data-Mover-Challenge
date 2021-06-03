@@ -26,6 +26,7 @@
       IPV4:
         - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
         - { IP: "203.30.39.19", HOSTNAME: "singaren-dtn" }
+        - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
         - { IP: "103.172.192.66", HOSTNAME: "nscc01" }
         - { IP: "193.166.254.54", HOSTNAME: "csc01" }
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
@@ -34,6 +35,7 @@
         - { IP: "145.146.1.8", HOSTNAME: "uva01" }
         - { IP: "213.135.51.226", HOSTNAME: "icm01" }
       IPV6:
+        - { IP: "2001:388:cf04:26::2", HOSTNAME: "aarnet01-ipv6" }
         - { IP: "2001:df4:2600::6", HOSTNAME: "nscc01-ipv6" }
         - { IP: "2001:708:10:6c05:2::2", HOSTNAME: "csc01-ipv6" }
         - { IP: "2a05:3280:439::68", HOSTNAME: "kaust01-ipv6" }
