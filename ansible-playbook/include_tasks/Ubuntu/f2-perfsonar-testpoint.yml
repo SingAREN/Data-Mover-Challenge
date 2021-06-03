@@ -15,7 +15,6 @@
         - perfsonar-testpoint
         - perfsonar-toolkit-ntp
         - perfsonar-toolkit-servicewatcher
-        - perfsonar-toolkit-security
       state: latest
       update_cache: yes 
     notify: Enable and Restart PerfSONAR Services
