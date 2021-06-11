@@ -132,6 +132,11 @@
         - { username: "DMCUser13", password: "$6$DAvhic2Szhc1$J8llllsbe38CzzJ38Ogzh/G6xhAAoLIYlicJMCKhyjlFXONRYRCFPZ8BOWXyg5ftuLHBSOHC6ADmsu2q/BWRq0" }
         - { username: "DMCUser14", password: "$6$DAvhic2Szhc1$0Naaf8uMhLVVQQ9MgFziA95ForLaKPK1U5q2CdjNZgjmDNRy6lwHYEfXIb5hT6wQg0.XxkL1f5hlO1riel9Pf/" }
         - { username: "DMCUser15", password: "$6$DAvhic2Szhc1$2DC39fmM.KRwR2nd6pfUI2Sykz5vIblY8BOf854NUqYfnnGDusXETthx4qr.KZSL1fZbxJZ/XUPkvk6HoB/ag0" }
+        - { username: "DMCUser16", password: "$6$DAvhic2Szhc1$kzPmX5dLhuOcRiF1ufBKfzgCJiGmkMnuFhA3MyoSKZ.Ap7vJlvIbi3bmsfzIeAmR48jyckXryqZFrAEdV.Bas0" }
+        - { username: "DMCUser17", password: "$6$DAvhic2Szhc1$e5EuU3mhcw99Zrax/0qY1dyiVJR2GQaA.TnymbDb813wwo3eUiZOLDWdxKjCfkMbpQd7ytz3PC518WzQkReSd/" }
+        - { username: "DMCUser18", password: "$6$DAvhic2Szhc1$gWw3/znOuycPDSfJpzk57TCudMhuq6vCOtS6RPDb0IB6g8Bfhluor3QwQtsghfLhkILPTW9Svxvnzg/T.mmJt0" }
+        - { username: "DMCUser19", password: "$6$DAvhic2Szhc1$kISLu0YPazpiZGZ7Alc4kGVbXbQhHbrWwnU8VvTPb0DbAebUt7CnDdRG4UioxOEYvs5A.r0p8mqQxsl.dIUoN/" }
+        - { username: "DMCUser20", password: "$6$DAvhic2Szhc1$.eqB20tdaNXwFy5nDk41QA3uJL1rREeRQ7ccMjwyUzGiopzDRcAzjVLEpS3zy.0SGfHr7kBu5dqvSY.zQA9/Q." }
 
     - name: Annex A1 - Setup Singularity Container Environment Pre-Requisites
       include_tasks: "include_tasks/{{ ansible_distribution }}/a1-singularity_prerequisites.yml"
