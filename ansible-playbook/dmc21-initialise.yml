@@ -32,7 +32,7 @@
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
         - { IP: "74.114.96.98", HOSTNAME: "starlight01" }
         - { IP: "210.119.23.12", HOSTNAME: "ksiti01" }
-        - { IP: "145.146.1.8", HOSTNAME: "uva01" }
+        - { IP: "145.146.1.10", HOSTNAME: "uva01" }
         - { IP: "213.135.51.226", HOSTNAME: "icm01" }
       IPV6:
         - { IP: "2001:388:cf04:26::2", HOSTNAME: "aarnet01-ipv6" }
