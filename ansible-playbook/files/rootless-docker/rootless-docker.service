@@ -1,0 +1,12 @@
+[Unit]
+Description=Start Docker Rootless
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment=DOCKERD_ROOTLESS_ROOTLESSKIT_FLAGS="-p 127.0.0.1:2376:2376/tcp"
+Environment=OPTIONS="--host=tcp://127.0.0.1:2376"
+ExecStart=/usr/bin/dockerd-rootless.sh $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

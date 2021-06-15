@@ -22,4 +22,13 @@
     get_url: 
       url : https://github.com/docker/compose/releases/download/1.29.1/docker-compose-linux-x86_64
       dest: /usr/local/bin/docker-compose
-      mode: 'u+x,g+x'
+      mode: '0755'
+
+  - name: Annex A2 - Set Maximum User Namespaces to 28633 for Rootless Docker
+    sysctl:
+      name: user.max_user_namespaces
+      value: 28633
+      state: present
+      sysctl_file: /etc/sysctl.d/rootless_docker.conf
+      reload: yes
+

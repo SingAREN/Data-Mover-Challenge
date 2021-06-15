@@ -27,9 +27,18 @@
       name: docker-ce 
       state: latest
     notify: Enable and Restart Docker
-  
+
   - name: Annex A2 - Install docker-compose
     get_url: 
       url : https://github.com/docker/compose/releases/download/1.29.1/docker-compose-linux-x86_64
       dest: /usr/local/bin/docker-compose
-      mode: 'u+x,g+x'
+      mode: '0755'
+
+  - name: Annex A2 - Install slirp4netns required for networking in Rootless Docker
+    get_url:
+      url: https://github.com/rootless-containers/slirp4netns/releases/download/v1.1.10/slirp4netns-x86_64
+      dest: /usr/local/bin/slirp4netns
+      checksum: sha256:ea28089b15ec4e07a4d69a35e9eafcb5c8f968f9d4ac07a2f39474bf1856d215
+      owner: root
+      group: root
+      mode: '0755'
