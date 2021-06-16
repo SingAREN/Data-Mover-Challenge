@@ -14,7 +14,7 @@
 
   - name: Annex A2 - Install Docker
     yum: 
-      name: docker 
+      name: docker-ce
       state: latest
     notify: Enable and Restart Docker
 
