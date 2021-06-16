@@ -149,23 +149,26 @@
     - name: Annex A2 - Setup Docker Container Environment
       include_tasks: "include_tasks/{{ ansible_distribution }}/a2-docker_installation.yml"
 
-    - name: Annex C - Prepare and Run the TuneDTN Python Script
-      include_tasks: "include_tasks/{{ ansible_distribution }}/c-dtn-tuning.yml"
+    - name: Annex A3 - Setup Rootless Docker Environment
+      include_tasks: "include_tasks/a3-rootless-docker.yml"
 
-    - name: Annex D - Perform Storage Benchmarking with fio
-      include_tasks: "include_tasks/{{ ansible_distribution }}/d-fio-storage-benchmark.yml"
-
-    - name: Annex E - Show Hardware with lshw
-      include_tasks: "include_tasks/e-lshw-retrieve-dtn-hw.yml"
-
-    - name: Annex F1 - Monitoring Tools - Install Prometheus Node Exporter
-      include_tasks: "include_tasks/f1-install-prometheus-node-exporter.yml"
-      
-    - name: Annex F2 - Monitoring Tools - Install PerfSONAR Testpoint
-      include_tasks: "include_tasks/{{ ansible_distribution }}/f2-perfsonar-testpoint.yml"
-      
-    - name: Annex G - Install elbencho
-      include_tasks: "include_tasks/{{ ansible_distribution }}/g-elbencho.yml"
-    
-    - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
-      include_tasks: "include_tasks/{{ ansible_distribution }}/h-firewall.yml" 
+      #    - name: Annex C - Prepare and Run the TuneDTN Python Script
+      #      include_tasks: "include_tasks/{{ ansible_distribution }}/c-dtn-tuning.yml"
+      #
+      #    - name: Annex D - Perform Storage Benchmarking with fio
+      #      include_tasks: "include_tasks/{{ ansible_distribution }}/d-fio-storage-benchmark.yml"
+      #
+      #    - name: Annex E - Show Hardware with lshw
+      #      include_tasks: "include_tasks/e-lshw-retrieve-dtn-hw.yml"
+      #
+      #    - name: Annex F1 - Monitoring Tools - Install Prometheus Node Exporter
+      #      include_tasks: "include_tasks/f1-install-prometheus-node-exporter.yml"
+      #      
+      #    - name: Annex F2 - Monitoring Tools - Install PerfSONAR Testpoint
+      #      include_tasks: "include_tasks/{{ ansible_distribution }}/f2-perfsonar-testpoint.yml"
+      #      
+      #    - name: Annex G - Install elbencho
+      #      include_tasks: "include_tasks/{{ ansible_distribution }}/g-elbencho.yml"
+      #    
+      #    - name: Annex H - Add trusted IPs to firewall to allow incoming traffic
+      #      include_tasks: "include_tasks/{{ ansible_distribution }}/h-firewall.yml" 

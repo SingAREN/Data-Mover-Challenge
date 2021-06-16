@@ -1,0 +1,54 @@
+---
+  - set_fact: 
+      users: "{{ USERS | map(attribute='username') | list }}"
+  - name: Annex A3 - Install Pre-Requisite Python Packages to run Docker containers from Ansible
+    pip:
+      name:
+        - docker==4.4.4
+      state: present
+      executable: pip
+
+  - name: Annex A3 - Start Rootless Docker environment in Rootfull Docker
+    docker_container:
+      name:  dind-rootless
+      image: docker:20.10-dind-rootless
+      state: started
+      recreate: yes
+      privileged: yes
+
+  - name: Annex A3 - Get USER environments
+    getent:
+      database: passwd
+
+  - name: Annex A3 - Create systemd directory for DMCUsers
+    file: 
+      path: "{{ item.value[4] }}/.config/systemd/user/"
+      owner: "{{ item.key }}"
+      group: "{{ item.key }}"
+      mode: 0755
+      recurse: yes
+    when: item.key in users
+    with_dict: "{{ getent_passwd }}"
+
+  - name: Annex A3 - Install User Systemd File
+    copy:
+      src: files/rootless-docker/rootless-docker.service
+      dest: "{{ item.value[4] }}/.config/systemd/user/rootless-docker.service"
+      owner: "{{ item.key }}"
+      group: "{{ item.key }}"
+      mode: 0755
+    when: item.key in users
+    with_dict: "{{ getent_passwd }}"
+
+  - name: Annex A3 - Setup Docker Socket in DMCUser environment
+    lineinfile:
+      path: "{{ item.value[4] }}/.bashrc"
+      line: export DOCKER_HOST=tcp://127.0.0.1:2376
+      owner: "{{ item.key }}"
+      group: "{{ item.key }}"
+      state: present
+      backup: yes
+    when: item.key in users
+    with_dict: "{{ getent_passwd }}"
+
+
