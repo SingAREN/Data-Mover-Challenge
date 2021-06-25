@@ -22,7 +22,14 @@
   - name: Annex F2 - Load PerfSONAR Automated IPv4 Test Mesh
     shell:
       cmd: psconfig remote add --configure-archives https://203.30.39.11/psconfig/dmc-v4-maddash-dashboard.json
+    register: psv4
+
+  - debug: var=psv4.stdout_lines
 
   - name: Annex F2 - Load PerfSONAR Automated IPv6 Test Mesh
     shell:
       cmd: psconfig remote add --configure-archives https://203.30.39.11/psconfig/dmc-v6-maddash-dashboard.json
+    register: psv6
+
+  - debug: var=psv6.stdout_lines
+
