@@ -24,3 +24,11 @@
       name: postgresql
       state: restarted
       enabled: yes
+
+  - name: Annex F2 - Load PerfSONAR Automated IPv4 Test Mesh
+    shell:
+      cmd: psconfig remote add --configure-archives https://203.30.39.11/psconfig/dmc-v4-maddash-dashboard.json
+
+  - name: Annex F2 - Load PerfSONAR Automated IPv6 Test Mesh
+    shell:
+      cmd: psconfig remote add --configure-archives https://203.30.39.11/psconfig/dmc-v6-maddash-dashboard.json
