@@ -37,7 +37,7 @@ Closing the foreground processs will terminate all running containers. Run `$ do
 
 ## Uninstall
 
-When finished, please run cleanup rootless Docker:
+When finished, please help to clean up the rootless Docker setup:
 
     $ dockerd-rootless-setuptool.sh uninstall
 
