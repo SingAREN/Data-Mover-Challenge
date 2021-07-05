@@ -40,7 +40,7 @@ Rootless Docker will now be running and ready for use.
 
 ## Uninstall
 
-When finished, please run
+When finished, please help to clean up the rootless Docker setup:
 
 To remove the systemd service of the Docker daemon, run `dockerd-rootless-setuptool.sh uninstall`
 
