@@ -29,6 +29,7 @@
         - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
         - { IP: "103.72.192.66", HOSTNAME: "nscc01" }
         - { IP: "193.166.254.54", HOSTNAME: "csc01" }
+        - { IP: "193.166.254.50", HOSTNAME: "csc02" }
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
         - { IP: "74.114.96.98", HOSTNAME: "starlight01" }
         - { IP: "210.119.23.12", HOSTNAME: "kisti01" }
@@ -38,6 +39,7 @@
         - { IP: "2001:388:cf04:26::2", HOSTNAME: "aarnet01-ipv6" }
         - { IP: "2001:df4:2600::6", HOSTNAME: "nscc01-ipv6" }
         - { IP: "2001:708:10:6c05:2::2", HOSTNAME: "csc01-ipv6" }
+        - { IP: "2001:708:10:6c05:1::2", HOSTNAME: "csc02-ipv6" }
         - { IP: "2a05:3280:439:69::68", HOSTNAME: "kaust01-ipv6" }
         - { IP: "2001:610:130::10", HOSTNAME: "uva01-ipv6" }
     USERS:
