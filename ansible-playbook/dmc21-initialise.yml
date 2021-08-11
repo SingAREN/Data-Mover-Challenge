@@ -27,6 +27,10 @@
         - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
         - { IP: "203.30.39.19", HOSTNAME: "singaren-dtn" }
         - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
+        - { IP: "202.180.37.58", HOSTNAME: "aarnet01-v1316" }
+        - { IP: "202.180.37.66", HOSTNAME: "aarnet01-v1318" }
+        - { IP: "202.180.37.59", HOSTNAME: "nict01-v1316" }
+        - { IP: "202.180.37.67", HOSTNAME: "nict01-v1318" }
         - { IP: "103.72.192.66", HOSTNAME: "nscc01" }
         - { IP: "193.166.254.54", HOSTNAME: "csc01" }
         - { IP: "193.166.254.50", HOSTNAME: "csc02" }
