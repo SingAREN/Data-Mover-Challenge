@@ -29,6 +29,7 @@
         - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
         - { IP: "202.180.37.58", HOSTNAME: "aarnet01-v1316" }
         - { IP: "202.180.37.66", HOSTNAME: "aarnet01-v1318" }
+        - { IP: "202.180.36.130", HOSTNAME: "nict-mgmt" }
         - { IP: "202.180.37.59", HOSTNAME: "nict01-v1316" }
         - { IP: "202.180.37.67", HOSTNAME: "nict01-v1318" }
         - { IP: "103.72.192.66", HOSTNAME: "nscc01" }
