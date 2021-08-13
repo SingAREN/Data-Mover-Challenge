@@ -156,6 +156,9 @@
     - name: Annex A2 - Setup Docker Container Environment
       include_tasks: "include_tasks/{{ ansible_distribution }}/a2-docker_installation.yml"
 
+    - name: Annex B - Set TCP Congestion Control Algorithm to htcp
+      include_tasks: "include_tasks/b-sysctl-tuning.yml"
+
     - name: Annex C - Prepare and Run the TuneDTN Python Script
       include_tasks: "include_tasks/{{ ansible_distribution }}/c-dtn-tuning.yml"
 
