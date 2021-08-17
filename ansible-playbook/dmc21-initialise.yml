@@ -42,7 +42,7 @@
         - { IP: "213.135.51.226", HOSTNAME: "icm01" }
       IPV6:
         - { IP: "2001:388:cf04:26::2", HOSTNAME: "aarnet01-ipv6" }
-        - { IP: "2001:df4:2600::6", HOSTNAME: "nscc01-ipv6" }
+        - { IP: "2001:df4:2600:2::2", HOSTNAME: "nscc01-ipv6" }
         - { IP: "2001:708:10:6c05:2::2", HOSTNAME: "csc01-ipv6" }
         - { IP: "2001:708:10:6c05:1::2", HOSTNAME: "csc02-ipv6" }
         - { IP: "2a05:3280:439:69::68", HOSTNAME: "kaust01-ipv6" }
