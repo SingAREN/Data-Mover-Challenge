@@ -9,6 +9,7 @@
         - python3-pip
         - virtualenv
         - python3-setuptools
+        - uidmap
       state: latest
        
   - name: Annex A2 - Add Docker GPG Key to Apt
