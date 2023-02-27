@@ -17,10 +17,11 @@
       DIR: /usr/local
       SHA256_CHECKSUM: 7154e88f5a8047aad4b80ebace58a059e36e7e2e4eb3b383127a28c711b4ff59 
     NODE_EXPORTER: 
-      VERSION: 1.1.2
-      SHA256_CHECKSUM: 8c1f6a317457a658e0ae68ad710f6b4098db2cad10204649b51e3c043aa3e70d
+      VERSION: 1.5.0
+      SHA256_CHECKSUM: af999fd31ab54ed3a34b9f0b10c28e9acee9ef5ac5a5d5edfdde85437db7acbb
     ELBENCHO:
-      VERSION: 1.8
+      VERSION: 2.2-5
+      PACKAGE: 2.2.5
       DIR: /usr/local
     TRUSTED_HOSTS:
       IPV4:
@@ -92,18 +93,18 @@
         enabled: yes
         state: restarted
         
-    - name: Enable and Restart PerfSONAR Services
-      systemd:
-        name: "{{ item }}"
-        state: restarted
-        enabled: yes
-      with_items:
-        - perfsonar-lsregistrationdaemon
-        - pscheduler-archiver
-        - pscheduler-runner
-        - pscheduler-scheduler
-        - pscheduler-ticker
-        - psconfig-pscheduler-agent
+        #    - name: Enable and Restart PerfSONAR Services
+        #      systemd:
+        #        name: "{{ item }}"
+        #        state: restarted
+        #        enabled: yes
+        #      with_items:
+        #        - perfsonar-lsregistrationdaemon
+        #        - pscheduler-archiver
+        #        - pscheduler-runner
+        #        - pscheduler-scheduler
+        #        - pscheduler-ticker
+        #        - psconfig-pscheduler-agent
 
   tasks:
 
@@ -172,7 +173,7 @@
       include_tasks: "include_tasks/f1-install-prometheus-node-exporter.yml"
       
     - name: Annex F2 - Monitoring Tools - Install PerfSONAR Testpoint
-      include_tasks: "include_tasks/{{ ansible_distribution }}/f2-perfsonar-testpoint.yml"
+      include_tasks: "include_tasks/f2-perfsonar-testpoint.yml"
       
     - name: Annex G - Install elbencho
       include_tasks: "include_tasks/{{ ansible_distribution }}/g-elbencho.yml"

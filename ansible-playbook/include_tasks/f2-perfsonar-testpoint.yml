@@ -1,0 +1,23 @@
+---
+  - name: Annex F2 - Download prerequisite to manager Docker via Ansible
+    pip:
+      name: docker-py==1.10.6
+      state: present
+
+  - name: Annex F2 - Setup PerfSONAR Testpoint v4.4.0 Docker container
+    docker_container:
+      name: perfsonar-testpoint
+      image: singaren/dmc23-perfsonar-testpoint:v4.4.0-systemd
+      state: started
+      recreate: yes
+      restart_policy: always
+      network_mode: host
+      env:
+        TZ: UTC
+        container: docker
+      volumes:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      tmpfs:
+        - /run
+        - /tmp
+      tty: yes

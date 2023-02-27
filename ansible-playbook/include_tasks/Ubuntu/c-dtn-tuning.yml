@@ -22,9 +22,9 @@
   
   - name: Annex C - Download Mellanox OFED Package
     get_url:
-      url: "http://content.mellanox.com/ofed/MLNX_OFED-{{ OFED_VERSION }}/MLNX_OFED_LINUX-{{ OFED_VERSION }}-ubuntu18.04-x86_64.tgz"
+      url: "http://content.mellanox.com/ofed/MLNX_OFED-{{ OFED_VERSION }}/MLNX_OFED_LINUX-{{ OFED_VERSION }}-ubuntu20.04-x86_64.tgz"
       dest: /tmp/MLNX_OFED_LINUX-{{ OFED_VERSION }}-ubuntu18.04-x86_64.tgz
-      checksum: sha256:bfdb1efad5f623ee1901abdd776ca4ed2cfecab348d553fd53ad67715064637f
+      checksum: sha256:60ebda2e8f038fa199d85d5e3f7abaa7f479a6ca8eaa3883a1ea41f5a35afd82
     register: ofed_download
     when: mlnx_tune.stat.exists == False
   
