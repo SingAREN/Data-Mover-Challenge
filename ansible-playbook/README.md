@@ -1,4 +1,4 @@
-# DMC21 DTN Initialisation and Benchmarking with Ansible 
+# DMC23 DTN Initialisation and Benchmarking with Ansible 
 
 **The Ansible playbook performs the following:**
 
@@ -13,34 +13,14 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
 
 ## Pre-requisites
 
-1. Requires CentOS 7.9 or Ubuntu 18.04 LTS
+1. Requires Ubuntu 20.04 LTS
 1. Setup storage for DMC which has to be found at `/DMC`
     1. Create `/DMC/data` directory with `0755` permissions
     1. Create `/DMC/test` directory with `0777` permissions
 
 
 ## Initial Setup
-### CentOS 7.9
-
-1. Enable EPEL Repository
-
-    ```
-    # yum install epel-release
-    ```
-
-2. Install Ansible via yum
-
-    ```
-    # yum install ansible git
-    ```
-  
-3. Check Ansible version if it is greater than >=2.5
-
-    ```
-    $ ansible --version
-    ```
-
-### Ubuntu 18.04 LTS
+### Ubuntu 20.04 LTS
 
 1. Update Apt Repository Cache
 
