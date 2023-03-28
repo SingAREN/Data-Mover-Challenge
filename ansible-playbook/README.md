@@ -9,7 +9,7 @@
 - Tunes network interfaces
 - Tunes kernel parameters
 
-The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
+The script is written for Ubuntu 20.04.4 LTS and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
 
 ## Pre-requisites
 
