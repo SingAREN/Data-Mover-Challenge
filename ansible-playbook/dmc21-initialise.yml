@@ -26,7 +26,8 @@
     TRUSTED_HOSTS:
       IPV4:
         - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
-        - { IP: "203.30.39.19", HOSTNAME: "singaren-dtn" }
+        - { IP: "203.30.39.19", HOSTNAME: "singaren01-10g" }
+        - { IP: "203.30.39.22", HOSTNAME: "singaren02-10g" }
         - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
         - { IP: "202.180.37.58", HOSTNAME: "aarnet01-v1316" }
         - { IP: "202.180.37.66", HOSTNAME: "aarnet01-v1318" }
