@@ -3,8 +3,8 @@
   #order: sorted
   become: yes
   vars:
-    DMC_INTERFACES: [''] # Change to your specific DTN Interface
-    FIO_BENCHMARK: true
+    DMC_INTERFACES: ['ens33'] # Change to your specific DTN Interface
+    FIO_BENCHMARK: false
     DMC_FILEPATH: /DMC
     LOG_DIRECTORY: /tmp/benchmarks
     LSHW_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-lshw.log"
@@ -23,6 +23,8 @@
       VERSION: 2.2-5
       PACKAGE: 2.2.5
       DIR: /usr/local
+    PERFSONAR:
+      VERSION: v5.0.1
     TRUSTED_HOSTS:
       IPV4:
         - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
