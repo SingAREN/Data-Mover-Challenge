@@ -3,7 +3,7 @@
   #order: sorted
   become: yes
   vars:
-    DMC_INTERFACES: ['ens33'] # Change to your specific DTN Interface
+    DMC_INTERFACES: [''] # Change to your specific DTN Interface
     FIO_BENCHMARK: true
     DMC_FILEPATH: /DMC
     LOG_DIRECTORY: /tmp/benchmarks
