@@ -33,10 +33,12 @@
         - { IP: "103.72.192.66", HOSTNAME: "nscc01" }
         - { IP: "193.166.254.50", HOSTNAME: "csc02" }
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
+        - { IP: "138.44.15.78", HOSTNAME: "aarnet01"}
       IPV6:
         - { IP: "2001:df4:2600:2::2", HOSTNAME: "nscc01-ipv6" }
         - { IP: "2001:708:10:6c05:1::2", HOSTNAME: "csc02-ipv6" }
         - { IP: "2a05:3280:439:69::68", HOSTNAME: "kaust01-ipv6" }
+        - { IP: "2001:388:cf04:26::1", HOSTNAME: "aarnet01-ipv6" }
     USERS:
       - { username: "DMCUser01", password: "$6$DAvhic2Szhc1$BW3HJJyWetAzdd0SzqAfej.epSkHXa38NCuu4G1BuZgnMNuql02jy/W7/Mmwaan5/vUxroRoDzYtzD1SIhbdA." }
       - { username: "DMCUser02", password: "$6$DAvhic2Szhc1$qcOKV1rlF.lchIe5FSTZeuUTYdcMGnzcBSgg6eZx/xZr6x6TKPUeEljSGj4hkbCVvLFLmIH6UCVYD5yK6ryC7/" }
