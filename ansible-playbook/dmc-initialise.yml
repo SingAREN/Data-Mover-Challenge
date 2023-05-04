@@ -4,7 +4,7 @@
   become: yes
   vars:
     DMC_INTERFACES: ['ens33'] # Change to your specific DTN Interface
-    FIO_BENCHMARK: false
+    FIO_BENCHMARK: true
     DMC_FILEPATH: /DMC
     LOG_DIRECTORY: /tmp/benchmarks
     LSHW_OUTPUT_LOG: "{{ LOG_DIRECTORY }}/dmc-lshw.log"
