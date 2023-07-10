@@ -46,18 +46,18 @@
       - psconfig-pscheduler-agent
 
   - name: Pause for 1 minute to load PerfSONAR
-    ansible.builtin.pause:
-    minutes: 1
+    pause:
+      minutes: 1
 
   - name: Annex F2 - Load in DMC23 Central Configuration for IPv4
     shell: /usr/bin/psconfig remote add "https://203.30.39.11/psconfig/dmc23-v4-maddash-dashboard.json" --configure-archives 
     register: psconfigv4load
 
- - debug: var=psconfigv4load
+  - debug: var=psconfigv4load
 
   - name: Annex F2 - Load in DMC23 Central Configuration for IPv6
     shell: /usr/bin/psconfig remote add "https://203.30.39.11/psconfig/dmc23-v6-maddash-dashboard.json" --configure-archives 
     register: psconfigv6load
 
- - debug: var=psconfigv6load
+  - debug: var=psconfigv6load
  
