@@ -32,6 +32,7 @@
         - { IP: "193.166.255.91", HOSTNAME: "csc01" }
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
         - { IP: "134.75.207.7", HOSTNAME: "kisti01" }
+        - { IP: "202.180.36.176", HOSTNAME: "nict01" }
         - { IP: "103.72.192.66", HOSTNAME: "nscc01" }
         - { IP: "203.30.39.11", HOSTNAME: "singaren-perfsonar" }
         - { IP: "203.30.39.19", HOSTNAME: "singaren01-10g" }
