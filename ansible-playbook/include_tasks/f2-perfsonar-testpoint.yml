@@ -60,4 +60,10 @@
     register: psconfigv6load
 
   - debug: var=psconfigv6load
- 
+
+  - name: Set PerfSONAR ping permissions
+    file:
+      path: /usr/bin/ping
+      owner: root
+      group: root
+      mode: '4755'
