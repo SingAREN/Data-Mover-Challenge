@@ -20,7 +20,7 @@
       clone: yes
       repo: https://github.com/breuner/elbencho.git
       dest: "{{ ELBENCHO.DIR }}/elbencho"
-      version: "v{{ ELBENCHO.VERSION }}-1"
+      version: "v{{ ELBENCHO.VERSION }}"
       
   - name: Annex G - Make elbencho Debian Package
     shell:
@@ -29,7 +29,7 @@
   
   - name: Annex G - Install elbencho
     apt:
-      deb: "{{ ELBENCHO.DIR }}/elbencho/packaging/elbencho_{{ ELBENCHO.VERSION }}.0_amd64.deb"
+      deb: "{{ ELBENCHO.DIR }}/elbencho/packaging/elbencho_{{ ELBENCHO.PACKAGE }}_amd64.deb"
         
   
   

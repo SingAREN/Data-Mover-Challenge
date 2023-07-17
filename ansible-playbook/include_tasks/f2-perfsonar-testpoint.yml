@@ -1,0 +1,69 @@
+---
+  - name: Annex F2 - Download prerequisite to manager Docker via Ansible
+    pip:
+      name: docker-py==1.10.6
+      state: present
+
+  - name: "Annex F2 - Setup PerfSONAR Testpoint {{ PERFSONAR.VERSION }} Docker container"
+    docker_container:
+      name: perfsonar-testpoint
+      image: "perfsonar/testpoint:{{ PERFSONAR.VERSION }}"
+      state: absent
+      recreate: yes
+      restart_policy: always
+      network_mode: host
+
+  - name: Annex F2 - Download PerfSONAR Sources List
+    get_url:
+      url: http://downloads.perfsonar.net/debian/perfsonar-release.list
+      dest: /etc/apt/sources.list.d/
+  
+  - name: Annex F2 - Add PerfSONAR Repository GPG Key
+    apt_key:
+      url: http://downloads.perfsonar.net/debian/perfsonar-official.gpg.key
+      state: present
+    
+  - name: Annex F2 - Install perfsonar-testpoint
+    apt: 
+      name:
+        - perfsonar-testpoint
+        - perfsonar-toolkit-ntp
+        - perfsonar-toolkit-servicewatcher
+      state: latest
+      update_cache: yes 
+
+  - name: Annex F2 - Enable and Restart PerfSONAR Services
+    systemd:
+      name: "{{ item }}"
+      state: restarted
+      enabled: yes
+    with_items:
+      - perfsonar-lsregistrationdaemon
+      - pscheduler-archiver
+      - pscheduler-runner
+      - pscheduler-scheduler
+      - pscheduler-ticker
+      - psconfig-pscheduler-agent
+
+  - name: Pause for 1 minute to load PerfSONAR
+    pause:
+      minutes: 1
+
+  - name: Annex F2 - Load in DMC23 Central Configuration for IPv4
+    shell: /usr/bin/psconfig remote add "https://203.30.39.11/psconfig/dmc23-v4-maddash-dashboard.json" --configure-archives 
+    register: psconfigv4load
+
+  - debug: var=psconfigv4load
+
+  - name: Annex F2 - Load in DMC23 Central Configuration for IPv6
+    shell: /usr/bin/psconfig remote add "https://203.30.39.11/psconfig/dmc23-v6-maddash-dashboard.json" --configure-archives 
+    register: psconfigv6load
+
+  - debug: var=psconfigv6load
+
+  - name: Set PerfSONAR ping permissions
+    file:
+      path: /usr/bin/ping
+      owner: root
+      group: root
+      mode: '4755'

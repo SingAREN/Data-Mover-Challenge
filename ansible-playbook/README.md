@@ -1,4 +1,4 @@
-# DMC21 DTN Initialisation and Benchmarking with Ansible 
+# DMC23 DTN Initialisation and Benchmarking with Ansible 
 
 **The Ansible playbook performs the following:**
 
@@ -9,38 +9,18 @@
 - Tunes network interfaces
 - Tunes kernel parameters
 
-The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
+The script is written for Ubuntu 20.04 LTS and Ansible >2.5. The user running the ansible-playbook must have administrator permissions.
 
 ## Pre-requisites
 
-1. Requires CentOS 7.9 or Ubuntu 18.04 LTS
+1. Requires Ubuntu 20.04 LTS
 1. Setup storage for DMC which has to be found at `/DMC`
     1. Create `/DMC/data` directory with `0755` permissions
     1. Create `/DMC/test` directory with `0777` permissions
 
 
 ## Initial Setup
-### CentOS 7.9
-
-1. Enable EPEL Repository
-
-    ```
-    # yum install epel-release
-    ```
-
-2. Install Ansible via yum
-
-    ```
-    # yum install ansible git
-    ```
-  
-3. Check Ansible version if it is greater than >=2.5
-
-    ```
-    $ ansible --version
-    ```
-
-### Ubuntu 18.04 LTS
+### Ubuntu 20.04 LTS
 
 1. Update Apt Repository Cache
 
@@ -64,14 +44,14 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
 4. Git Clone Data-Mover Challenge Repository
 
       ```
-      $ git clone https://github.com/SingAREN/Data-Mover-Challenge.git && cd Data-Mover-Challenge/ansible-playbook
+      $ git clone -b dmc23 https://github.com/SingAREN/Data-Mover-Challenge.git && cd Data-Mover-Challenge/ansible-playbook
       ```
 
-5. Edit the `DMC_INTERFACES` variables within `dmc21-initialise.yml` `vars` entry. 
+5. Edit the `DMC_INTERFACES` variables within `dmc-initialise.yml` `vars` entry. 
     - `DMC_INTERFACES` is the network interface used during the DMC in list format, this is required for tuning the specific interfaces.
     
     ```
-    $ vi dmc21-initialise.yml
+    $ vi dmc-initialise.yml
     ```
     Example:
     
@@ -83,7 +63,7 @@ The script is written for CentOS 7.9 and Ubuntu 18.04 LTS and Ansible >2.5. The 
 6. Once the `DMC_INTERFACES` variables have been added, run the Ansible playbook with the `-b -K` flags. The flags indicate Ansible to become the administrator user.
 
     ```
-    $ ansible-playbook -b -K dmc21-initialise.yml
+    $ ansible-playbook -b -K dmc-initialise.yml
     ``` 
 
 ### Notes:
