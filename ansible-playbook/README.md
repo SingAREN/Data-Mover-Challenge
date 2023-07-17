@@ -44,7 +44,7 @@ The script is written for Ubuntu 20.04 LTS and Ansible >2.5. The user running th
 4. Git Clone Data-Mover Challenge Repository
 
       ```
-      $ git clone -b dmc23 https://github.com/SingAREN/Data-Mover-Challenge.git && cd Data-Mover-Challenge/ansible-playbook
+      $ git clone -b dmc23-starlink https://github.com/SingAREN/Data-Mover-Challenge.git && cd Data-Mover-Challenge/ansible-playbook
       ```
 
 5. Edit the `DMC_INTERFACES` variables within `dmc-initialise.yml` `vars` entry. 
