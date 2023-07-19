@@ -29,7 +29,7 @@ Reference: Run the Docker daemon as a non-root user (Rootless mode) [https://doc
     export PATH=/usr/bin:$PATH
     export DOCKER_HOST=unix:///run/user/1000/docker.sock\
     
-Please that note of the two export commands that need be run initially and to be placed in `./bashrc`. 
+Please take note of the two export commands that need be run initially and to be placed in `./bashrc`. 
 
 **DO NOT** use the export commands from the example above as they relate to `testuser` user who is not present within the DMC DTNs.
 
