@@ -20,6 +20,14 @@ Run the following command
 Please that note of the two export commands that need be run initially and to be placed in `./bashrc`. **DO NOT** use the export commands from the example above
 as they relate to `testuser` user who is not present within the DMC DTNs.
 
+If the above dockerd-rootless-setuptool.sh is not found, use the installation script available at https://get.docker.com/rootless
+
+Run the following command
+    
+    $ curl -fsSL https://get.docker.com/rootless | sh
+
+Reference: Run the Docker daemon as a non-root user (Rootless mode) [https://docs.docker.com/engine/security/rootless/]
+
 
 ## Start Rootless Docker
 
