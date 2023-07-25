@@ -28,7 +28,7 @@
     TRUSTED_HOSTS:
       IPV4:
         - { IP: "138.44.15.78", HOSTNAME: "aarnet01" }
-        - { IP: "170.39.8.103", HOSTNAME: "amlight01" }
+        - { IP: "190.103.184.179", HOSTNAME: "amlight01" }
         - { IP: "193.166.255.91", HOSTNAME: "csc01" }
         - { IP: "109.171.131.68", HOSTNAME: "kaust01" }
         - { IP: "134.75.207.7", HOSTNAME: "kisti01" }
