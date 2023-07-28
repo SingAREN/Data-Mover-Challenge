@@ -31,7 +31,21 @@
         - perfsonar-toolkit-servicewatcher
       state: latest
       update_cache: yes 
+  
+  - name: Annex F2 - Check existence of PerfSONAR lsregistrationdaemon Configuration
+    stat:
+      path: /etc/perfsonar/lsregistrationdaemon.conf
+    register: lsregistrationdaemon
 
+  - name: Annex F2 - Recover PerfSONAR lsregistrationdaemon Configuration
+    copy:
+      src: /etc/perfsonar/lsregistrationdaemon.conf.dpkg-bak
+      dest: /etc/perfsonar/lsregistrationdaemon.conf
+      owner: root
+      group: root
+      mode: 0644
+    when: lsregistrationdaemon.stat.exists == False
+    
   - name: Annex F2 - Enable and Restart PerfSONAR Services
     systemd:
       name: "{{ item }}"
