@@ -44,7 +44,7 @@
         - { IP: "2001:388:cf04:26::1", HOSTNAME: "aarnet01-ipv6" }
         - { IP: "2001:468:700:a::ff", HOSTNAME: "amlight01-ipv6" }
         - { IP: "2001:708:10:6c06:1::1", HOSTNAME: "csc01-ipv6" }
-        - { IP: "2a05:3280:439:69::68", HOSTNAME: "kaust01-ipv6" }
+        - { IP: "2a05:3280:439:69:63f:72ff:fedb:ee35", HOSTNAME: "kaust01-ipv6" }
         - { IP: "2001:df4:2600:2::2", HOSTNAME: "nscc01-ipv6" }
         - { IP: "2001:1348:3:34::7", HOSTNAME: "rnp01-ipv6" }
         - { IP: "2001:610:2d0:200:ae1f:6bff:fe5a:42d2", HOSTNAME: "uva01-ipv6" }
